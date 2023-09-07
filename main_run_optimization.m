@@ -9,6 +9,7 @@ v = 8.0;  % desired velocity
 step = 1.5;  % step (approximate)
 period = step/v;
 T = period;
+tiptoe_duration_bound = [0,0.5];
 
 flags = Flags;
 flags.use_sea = true;
@@ -41,19 +42,26 @@ mode2 = ocl.Stage( ...
   'pathcosts', @optimizer.pathcosts, ...
   'gridconstraints', @optimizer.gridconstraints2, ...
   'N', 14, 'd', 3); % Airborne!!!
-% TODO Mode 3 Ground touch
+mode3 = ocl.Stage( ...
+  [], ...
+  'vars', @optimizer.vars3, ...
+  'dae', @optimizer.dae3, ...
+  'pathcosts', @optimizer.pathcosts, ...
+  'gridconstraints', @optimizer.gridconstraints2, ...
+  'N', 2, 'd', 3); % Tiptoe Touchdown
 
 %                        1end  
-period_bound = period*[0.3, 0.6];
+period_bound = period*[0.3, 0.6, 0.8, 1.2];
 mode1.setInitialStateBounds('time', 0);
 mode1.setEndStateBounds('time', period_bound(1), period_bound(2));
 mode2.setInitialStateBounds('time', period_bound(1), period_bound(2));
-mode2.setEndStateBounds('time', period*0.8, period*1.2);
+mode2.setEndStateBounds('time', period_bound(3), period_bound(4));
+mode3.setInitialStateBounds('time', period_bound(3), period_bound(4));
+mode3.setEndStateBounds('time', period_bound(3)+tiptoe_duration_bound(1), period_bound(4)+tiptoe_duration_bound(2));
 
+ig.set_initial_guess(mode1, mode2, mode3, period);
 
-ig.set_initial_guess(mode1, mode2, period);
-
-ocp = ocl.MultiStageProblem({mode1,mode2}, ...
+ocp = ocl.MultiStageProblem({mode1,mode2,mode3}, ...
                             {@optimizer.trans_stand2float});
 
 % save console log
