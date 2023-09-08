@@ -162,6 +162,9 @@ toc
   Jc2 = jacobian([dpj(6,:) dth_abs(6)],dq);
   dJc2 = create_model.mydiff(Jc2,q,dq, d2q,d3q);
 
+  Jtoe = jacobian([dpj(3,:) dth_abs(3)],dq);  
+  dJtoe = create_model.mydiff(Jtoe,q,dq, d2q,d3q);
+  
   dpzmp = create_model.mydiff(pzmp,q,dq,d2q,d3q);
   Jzmp = jacobian([dpzmp dth_abs(3)],dq);
   dJzmp = create_model.mydiff(Jzmp,q,dq, d2q,d3q);
@@ -189,6 +192,8 @@ toc
   matlabFunction(dJc1,'file','+SEA_model/dJc1.m');
   matlabFunction(Jc2,'file','+SEA_model/Jc2.m');
   matlabFunction(dJc2,'file','+SEA_model/dJc2.m');
+  matlabFunction(Jtoe,'file','+SEA_model/Jtoe.m');
+  matlabFunction(dJtoe,'file','+SEA_model/dJtoe.m');
   matlabFunction(Jzmp,'file','+SEA_model/Jzmp.m');
   matlabFunction(dJzmp,'file','+SEA_model/dJzmp.m');
   create_model.modify_functions();

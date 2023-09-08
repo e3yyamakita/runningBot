@@ -13,23 +13,17 @@ function gridconstraints1(conh, k, K, x, p)
   optimizer.gridconstraints_base(conh, q, phi, pj, dpj, x);
 
   %% 各関節が地面より上(y座標制約)
-  conh.add(pj(1,2),'>=',0);
+  conh.add(pj(1,2),'>=',0); % 支持脚ひざ
   conh.add(pj(3,2),'==',0); % 支持脚つまさき
+  conh.add(pj(4,2),'==',0); % 支持脚かかと
   
-  if flags.forefoot
-    % フォアフット走法制約
-    conh.add(pj(4,2),'>=',0); %
-  else
-    conh.add(pj(4,2),'==',0); % 支持脚かかと
-  end
-
   
   conh.add(pj(5,2),'>=',0);
-  if(k==1)
+  if(k==1)                  % かかとは初期空中
     conh.add(pj(6,2),'>=',0.1);
     conh.add(pj(6,2),'<=',0.3);
   else
-    conh.add(pj(7,2),'>=',0);
+    conh.add(pj(7,2),'>=',0);   % つまさきは地面以上
   end
   conh.add(pj(8,2),'>=',0);
 

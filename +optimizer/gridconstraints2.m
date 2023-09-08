@@ -58,6 +58,7 @@ if k == K
         conh.add([q;phi;dq_after;dphi],'==',reset_map*[q0;phi0;dq0;dphi0]+[T*v;zeros(31,1)]);
     end
 end
+%TODO fix final state constraint, need to move this to the last slot
 
 % 滑らか制約
 conh.add(ppphi-2*pphi+phi,'<=',2)
