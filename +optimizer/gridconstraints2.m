@@ -42,11 +42,12 @@ if k == K
         reset_map = blkdiag(reset_map2,reset_map2);
         T = x.time;
         conh.add([q;phi;dq_after;dphi],'==',reset_map*[q0;phi0;dq0;dphi0]+[T*dq0(1);zeros(31,1)]);
+        % TODO check out if it needs change
     else
         conh.add(dpj(6,2),'<=',0); %脚交換制約
         conh.add((q(1)-q0(1))/x.time,'==',v); %走行速度
         % reset map
-        dq_after_lambda = [M,-Jc2.'; Jc2,zeros(3,3)] \ [M*dq; zeros(3,1)];
+        dq_after_lambda = [M,-Jtoe2.'; Jtoe2,zeros(3,3)] \ [M*dq; zeros(3,1)];
         dq_after = dq_after_lambda(1:10);
         reset_map1 = [
             zeros(3),eye(3);

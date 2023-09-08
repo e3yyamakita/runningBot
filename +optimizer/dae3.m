@@ -94,7 +94,7 @@ function dae3(daeh,x,z,u,p)
   Jtoe = SEA_model.Jtoe(params,x,z);
   Jc1 = SEA_model.Jc1(params,x);
   dJc1 = SEA_model.dJc1(params,x);
-  fe = [z.fex; z.fey; z.feth];
+  fe = [z.fex; z.fey];
   
   if flags.use_sea
     tau = K*(phi-q(5:10,:));

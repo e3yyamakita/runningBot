@@ -4,6 +4,11 @@ function trans_stand2float(ch, x0, xF)
 % x0 current stage
 % xF previous stage
 global flags
+M = SEA_model.M(params,x0);
+Jc1 = SEA_model.Jc1(params,x0);
+[q, dq, phi, dphi] = utils.decompose_state(x0);
+dq_after_lambda = [M,-Jc1.'; Jc1,zeros(3,3)] \ [M*dq; zeros(3,1)];
+dq_after = dq_after_lambda(1:10);
 ch.add(x0.xb  , '==', xF.xb  );
 ch.add(x0.yb  , '==', xF.yb  );
 ch.add(x0.thb , '==', xF.thb );
@@ -20,16 +25,16 @@ ch.add(x0.phi3, '==', xF.phi3);
 ch.add(x0.phi4, '==', xF.phi4);
 ch.add(x0.phi5, '==', xF.phi5);
 ch.add(x0.phi6, '==', xF.phi6);
-ch.add(x0.dxb  , '==', xF.dxb  );
-ch.add(x0.dyb  , '==', xF.dyb  );
-ch.add(x0.dthb , '==', xF.dthb );
-ch.add(x0.dlw  , '==', xF.dlw  );
-ch.add(x0.dth1 , '==', xF.dth1 );
-ch.add(x0.dth2 , '==', xF.dth2 );
-ch.add(x0.dth3 , '==', xF.dth3 );
-ch.add(x0.dth4 , '==', xF.dth4 );
-ch.add(x0.dth5 , '==', xF.dth5 );
-ch.add(x0.dth6 , '==', xF.dth6 );
+ch.add(dq_after(1)  , '==', xF.dxb  );
+ch.add(dq_after(2)  , '==', xF.dyb  );
+ch.add(dq_after(3) , '==', xF.dthb );
+ch.add(dq_after(4)  , '==', xF.dlw  );
+ch.add(dq_after(5) , '==', xF.dth1 );
+ch.add(dq_after(6) , '==', xF.dth2 );
+ch.add(dq_after(7) , '==', xF.dth3 );
+ch.add(dq_after(8) , '==', xF.dth4 );
+ch.add(dq_after(9) , '==', xF.dth5 );
+ch.add(dq_after(10) , '==', xF.dth6 );
 ch.add(x0.dphi1, '==', xF.dphi1);
 ch.add(x0.dphi2, '==', xF.dphi2);
 ch.add(x0.dphi3, '==', xF.dphi3);
