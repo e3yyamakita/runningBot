@@ -176,29 +176,29 @@ toc
   toc
   [~,~]=mkdir('+SEA_model');
   [~,~]=mkdir('+Inerter_model');
-%   matlabFunction(pj,'file','+SEA_model/pj.m');
-%   matlabFunction(dpj,'file','+SEA_model/dpj.m');
-%   matlabFunction(pc,'file','+SEA_model/pc.m');
-%   matlabFunction(dpc,'file','+SEA_model/dpc.m');
-%   matlabFunction(ddpc,'file','+SEA_model/ddpc.m');
-%   matlabFunction(pw,'file','+SEA_model/pw.m');
-%   matlabFunction(ddpw,'file','+SEA_model/ddpw.m');
-%   matlabFunction(pcom,'file','+SEA_model/pcom.m');
-%   matlabFunction(dpcom,'file','+SEA_model/dpcom.m');
-%   matlabFunction(ddpcom,'file','+SEA_model/ddpcom.m');
-%   matlabFunction(M0,'file','+SEA_model/M.m');
-%   matlabFunction(h,'file','+SEA_model/h.m');
-% 
-%   % matlabFunction(bm,'file','+Inerter_model/bm.m');
-%   
-%   matlabFunction(Jc1,'file','+SEA_model/Jc1.m');
-%   matlabFunction(dJc1,'file','+SEA_model/dJc1.m');
-%   matlabFunction(Jc2,'file','+SEA_model/Jc2.m');
-%   matlabFunction(dJc2,'file','+SEA_model/dJc2.m');
+  matlabFunction(pj,'file','+SEA_model/pj.m');
+  matlabFunction(dpj,'file','+SEA_model/dpj.m');
+  matlabFunction(pc,'file','+SEA_model/pc.m');
+  matlabFunction(dpc,'file','+SEA_model/dpc.m');
+  matlabFunction(ddpc,'file','+SEA_model/ddpc.m');
+  matlabFunction(pw,'file','+SEA_model/pw.m');
+  matlabFunction(ddpw,'file','+SEA_model/ddpw.m');
+  matlabFunction(pcom,'file','+SEA_model/pcom.m');
+  matlabFunction(dpcom,'file','+SEA_model/dpcom.m');
+  matlabFunction(ddpcom,'file','+SEA_model/ddpcom.m');
+  matlabFunction(M0,'file','+SEA_model/M.m');
+  matlabFunction(h,'file','+SEA_model/h.m');
+
+  % matlabFunction(bm,'file','+Inerter_model/bm.m');
+  
+  matlabFunction(Jc1,'file','+SEA_model/Jc1.m');
+  matlabFunction(dJc1,'file','+SEA_model/dJc1.m');
+  matlabFunction(Jc2,'file','+SEA_model/Jc2.m');
+  matlabFunction(dJc2,'file','+SEA_model/dJc2.m');
   matlabFunction(Jtoe,'file','+SEA_model/Jtoe.m');
   matlabFunction(dJtoe,'file','+SEA_model/dJtoe.m');
-%   matlabFunction(Jzmp,'file','+SEA_model/Jzmp.m');
-%   matlabFunction(dJzmp,'file','+SEA_model/dJzmp.m');
+  matlabFunction(Jzmp,'file','+SEA_model/Jzmp.m');
+  matlabFunction(dJzmp,'file','+SEA_model/dJzmp.m');
     matlabFunction(Jtoe,'file','+SEA_model/Jtoe2.m');
   matlabFunction(dJtoe,'file','+SEA_model/dJtoe2.m');
   create_model.modify_functions();

@@ -30,16 +30,16 @@ classdef InitialGuess
   end
   methods
     function ig = InitialGuess(step, draw)
-      ig.xb = [-step/3,step/4,step*2/3,step*2/3];
-      ig.yb = [sqrt(0.8^2-(step/3)^2),sqrt(0.8^2-(step/4)^2),sqrt(0.8^2-(step/3)^2),sqrt(0.8^2-(step/3)^2)];
+      ig.xb = [-step/3,-step/3,step/4,step*2/3];
+      ig.yb = [sqrt(0.8^2-(step/3)^2),sqrt(0.8^2-(step/3)^2),sqrt(0.8^2-(step/4)^2),sqrt(0.8^2-(step/3)^2)];
       ig.thb = [pi,pi,pi,pi]*2/5;
       ig.lw = [0.4, 0.4, 0.4, 0.4]*params.l7;
-      ig.th1 = [asin(step/3/0.8),-asin(step/4/0.8),-asin(step/3/0.8)]+(pi+(pi/2-ig.thb),-asin(step/3/0.8)]+(pi+(pi/2-ig.thb));
-      ig.th2 = [0,0,-pi/4,-pi/4];
-      ig.th3 = [acos(step/3/0.8),pi-acos(step/4/0.8),pi-acos(step/3/0.8),pi-acos(step/3/0.8)];
-      ig.th4 = [-asin(step/3/0.8),asin(step/4/0.8)+pi/5,asin(step/3/0.8)]+(pi+(pi/2-ig.thb),asin(step/3/0.8)]+(pi+(pi/2-ig.thb));
-      ig.th5 = [-pi/4,-pi*3/5,0,0];
-      ig.th6 = [pi-acos(step/3/0.8),acos(step/4/0.8),acos(step/3/0.8),acos(step/3/0.8)];
+      ig.th1 = [asin(step/3/0.8),asin(step/3/0.8),-asin(step/4/0.8),-asin(step/3/0.8)]+(pi+(pi/2-ig.thb));
+      ig.th2 = [0,0,0,-pi/4];
+      ig.th3 = [acos(step/3/0.8),acos(step/3/0.8),pi-acos(step/4/0.8),pi-acos(step/3/0.8)];
+      ig.th4 = [-asin(step/3/0.8),-asin(step/3/0.8),asin(step/4/0.8)+pi/5,asin(step/3/0.8)]+(pi+(pi/2-ig.thb));
+      ig.th5 = [-pi/4,-pi/4,-pi*3/5,0];
+      ig.th6 = [pi-acos(step/3/0.8),pi-acos(step/3/0.8),acos(step/4/0.8),acos(step/3/0.8)];
       ig.phi1 = ig.th1;
       ig.phi2 = ig.th2;
       ig.phi3 = ig.th3;
@@ -106,7 +106,7 @@ classdef InitialGuess
     function set_initial_guess(obj, mode1, mode2, mode3, period, tiptoe_duration)
       period1 = period*0.5;
       period2 = period*0.5;
-      period = [period1, period2, tiptoe_duration];
+      period = [tiptoe_duration, period1, period2];
       utils.set_initial_guess(mode1, 1, obj, period);
       utils.set_initial_guess(mode2, 2, obj, period);
       utils.set_initial_guess(mode3, 3, obj, period);

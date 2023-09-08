@@ -59,7 +59,7 @@ mode2.setInitialStateBounds('time', period_bound(1), period_bound(2));
 mode2.setEndStateBounds('time', period_bound(3), period_bound(4));
 
 ig.set_initial_guess(mode3, mode1, mode2, period, mean(tiptoe_duration_bound));
-% TODO fix the initial guess
+
 ocp = ocl.MultiStageProblem({mode3,mode1,mode2}, ...
                             {@optimizer.trans_tipetoe_touchdown,@optimizer.trans_stand2float});
 

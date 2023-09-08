@@ -22,6 +22,7 @@ function gridconstraints3(conh, k, K, x, p)
   if(k==1)                  % かかとは初期空中
     conh.add(pj(6,2),'>=',0.1);
     conh.add(pj(6,2),'<=',0.3);
+    conh.add(pj(4,2),'>=',0.05);
   else
     conh.add(pj(7,2),'>=',0);   % つまさきは地面以上
   end
