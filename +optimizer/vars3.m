@@ -14,5 +14,6 @@ function vars3(vh)
   %end
   vh.addAlgVar('fex');
   vh.addAlgVar('fey', 'lb', 0);
-
+  vh.addAlgVar('feth', 'lb', 0, 'ub', 0);
+  
   fprintf('vars3                  complete : %.2f seconds\n',toc);

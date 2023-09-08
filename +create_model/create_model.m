@@ -199,8 +199,8 @@ toc
   matlabFunction(dJtoe,'file','+SEA_model/dJtoe.m');
   matlabFunction(Jzmp,'file','+SEA_model/Jzmp.m');
   matlabFunction(dJzmp,'file','+SEA_model/dJzmp.m');
-    matlabFunction(Jtoe,'file','+SEA_model/Jtoe2.m');
-  matlabFunction(dJtoe,'file','+SEA_model/dJtoe2.m');
+  matlabFunction(Jtoe,'file','+SEA_model/Jtoe2.m');
+  matlabFunction(dJtoe2,'file','+SEA_model/dJtoe2.m');
   create_model.modify_functions();
   disp('Finish');
   toc

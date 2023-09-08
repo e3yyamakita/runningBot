@@ -27,6 +27,7 @@ conh.add(dpj(6,1),'>=',0);
 
 M = SEA_model.M(params,x);
 Jc2 = SEA_model.Jc2(params,x);
+Jtoe2 = SEA_model.Jtoe2(params,x);
 if k == K
     if flags.optimize_vmode
         conh.add(dpj(6,2),'<=',0); %脚交換制約
@@ -47,7 +48,7 @@ if k == K
         conh.add(dpj(6,2),'<=',0); %脚交換制約
         conh.add((q(1)-q0(1))/x.time,'==',v); %走行速度
         % reset map
-        dq_after_lambda = [M,-Jtoe2.'; Jtoe2,zeros(3,3)] \ [M*dq; zeros(3,1)];
+        dq_after_lambda = [M,-Jtoe2.'; Jtoe2,zeros(2,2)] \ [M*dq; zeros(2,1)];
         dq_after = dq_after_lambda(1:10);
         reset_map1 = [
             zeros(3),eye(3);

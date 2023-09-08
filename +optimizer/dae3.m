@@ -92,6 +92,7 @@ function dae3(daeh,x,z,u,p)
   xcom = pcom(1); ycom = pcom(2);
   ddxcom = ddpcom(1); ddycom = ddpcom(2);
   Jtoe = SEA_model.Jtoe(params,x,z);
+  dJtoe = SEA_model.dJtoe(params,x,z);
   Jc1 = SEA_model.Jc1(params,x);
   dJc1 = SEA_model.dJc1(params,x);
   fe = [z.fex; z.fey];
@@ -103,14 +104,14 @@ function dae3(daeh,x,z,u,p)
   end
   tau2 = [uw;tau];
   if flags.use_inerter
-    DAE1 = [M+bm,-Jtoe.']*[ddq;fe] - [S*tau2-h];
+    DAE1 = [M+bm,-Jtoe.'; Jtoe,zeros(2,2)]*[ddq;fe] - [S*tau2-h; -dJtoe*dq];
   else  
-    DAE1 = [M,-Jtoe.']*[ddq;fe] - [S*tau2-h];
+    DAE1 = [M,-Jtoe.'; Jtoe,zeros(2,2)]*[ddq;fe] - [S*tau2-h; -dJtoe*dq];
   end
   DAE2 = B*ddphi - (U-tau);
   %DAE3 = sum(m)*[ddxcom; ddycom] - (-[0; sum(m)*g] + fe);
   %DAE4L = -xcom*sum(m)*g + z.zmp_x*z.fey;
-
+  DAE3 = [z.feth];
   
   daeh.setAlgEquation(DAE1(1));
   daeh.setAlgEquation(DAE1(2));
@@ -119,6 +120,9 @@ function dae3(daeh,x,z,u,p)
   daeh.setAlgEquation(DAE1(5));
   daeh.setAlgEquation(DAE1(6));
   daeh.setAlgEquation(DAE1(7));
+  daeh.setAlgEquation(DAE1(8));
+  daeh.setAlgEquation(DAE1(9));
+  daeh.setAlgEquation(DAE1(10));
   daeh.setAlgEquation(DAE2(1));
   daeh.setAlgEquation(DAE2(2));
   daeh.setAlgEquation(DAE2(3));
@@ -129,7 +133,6 @@ function dae3(daeh,x,z,u,p)
   %daeh.setAlgEquation(DAE3(2));
   daeh.setAlgEquation(DAE1(11));
   daeh.setAlgEquation(DAE1(12));
-  daeh.setAlgEquation(DAE1(13));
-  
+  daeh.setAlgEquation(DAE3(1));
   fprintf('dae3                   complete : %.2f seconds\n',toc);
 end

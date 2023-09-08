@@ -29,7 +29,7 @@ function gridconstraints1(conh, k, K, x, p)
 
   conh.add(ppphi-2*pphi+phi,'<=',2) %滑らか制約
   conh.add(ppphi-2*pphi+phi,'>=',-2)
-
+  
   ppphi = pphi;
   pphi = phi;
 

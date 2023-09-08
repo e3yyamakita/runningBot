@@ -1,6 +1,6 @@
 function result_txt(result,filename)
 global b_init
-file_name = ['+search_local_solution/+result/' filename '.txt'];
+file_name = ['+results/' filename '.mat'];
 diary(file_name)
 
 output.print_param(result);

@@ -31,7 +31,6 @@ function gridconstraints3(conh, k, K, x, p)
   
   %% 遊脚前進制約
   conh.add(dpj(6,1),'>=',0);
-
     if k == K
         conh.add(dpj(2,2),'<=',0); %脚交換制約
         % Impact condition is in transition function
