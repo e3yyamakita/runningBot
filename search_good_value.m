@@ -1,10 +1,10 @@
 global mode1N mode2N mode3N v step
 
-for mode1Now = 8
+for mode1Now = 10
     mode1N = mode1Now;
     for mode2Now = 14
         mode2N = mode2Now;
-        for mode3Now = 4
+        for mode3Now = 1
             mode3N = mode3Now;
                 for vNow = 8
                     v = vNow;

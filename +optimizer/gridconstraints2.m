@@ -23,13 +23,14 @@ conh.add(pj(8,2),'>=',0);
 
 % 遊脚前進制約
 conh.add(dpj(2,1),'>=',0);
-conh.add(dpj(6,1),'>=',0);
+conh.add(dpj(6,1),'>=',-0.1);
 
 M = SEA_model.M(params,x);
 Jc2 = SEA_model.Jc2(params,x);
 Jtoe2 = SEA_model.Jtoe2(params,x);
 if k == K
     if flags.optimize_vmode
+        conh.add(dq(9,1),'<=',0); % Might help find sol TODO remove this
         conh.add(dpj(6,2),'<=',0); %脚交換制約
         % conh.add((q(1)-q0(1))/x.time,'==',dq0(1)); %平均速度指定
         % reset map
@@ -45,6 +46,7 @@ if k == K
         conh.add([q;phi;dq_after;dphi],'==',reset_map*[q0;phi0;dq0;dphi0]+[T*dq0(1);zeros(31,1)]);
         % TODO check out if it needs change
     else
+        conh.add(dq(9,1),'<=',0); % Might help find sol TODO remove this
         conh.add(dpj(6,2),'<=',0); %脚交換制約
         conh.add((q(1)-q0(1))/x.time,'==',v); %走行速度
         % reset map
@@ -54,10 +56,10 @@ if k == K
             zeros(3),eye(3);
             eye(3),zeros(3)
             ];
-        reset_map2 = blkdiag(eye(4),reset_map1,reset_map1);
-        reset_map = blkdiag(reset_map2,reset_map2);
+        reset_map2 = blkdiag(eye(3),reset_map1,reset_map1);
+        reset_map = blkdiag(reset_map2,[1],reset_map2);
         T = x.time;
-        conh.add([q;phi;dq_after;dphi],'==',reset_map*[q0;phi0;dq0;dphi0]+[T*v;zeros(31,1)]);
+        conh.add([q(2:end);phi;dq_after;dphi],'==',reset_map*[q0(2:end);phi0;dq0;dphi0]);
     end
 end
 

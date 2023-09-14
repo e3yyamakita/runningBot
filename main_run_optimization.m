@@ -7,12 +7,13 @@ global mode1N mode2N mode3N
 
 if exist('mode1N','var') == 0
     disp("Global variables not initialized. Value defaulted.")
-    mode1N = 12;
-    mode2N = 10;
-    mode3N = 4;
-    v = 6.0;  % desired velocity
+    mode1N = 10;
+    mode2N = 14;
+    mode3N = 1;
+    v = 8.0;  % desired velocity
     step = 1.5;
 end
+
 disp("Starting with ");
 disp([mode1N,mode2N,mode3N,v,step]);
 
@@ -22,7 +23,7 @@ disp([mode1N,mode2N,mode3N,v,step]);
   % step (approximate)
 period = step/v;
 T = period;
-tiptoe_duration_bound = [0,0.001];
+tiptoe_duration_bound = [0,0.0001];
 
 flags = Flags;
 flags.use_sea = true;
@@ -63,7 +64,7 @@ mode2 = ocl.Stage( ...
   'N', mode2N, 'd', 3); % Airborne!!!
 
 %                        1end  
-period_bound = period*[0.2, 0.7, 0.75, 1.25];
+period_bound = period*[0.3, 0.6, 0.8, 1.2];
 mode3.setInitialStateBounds('time', 0);
 mode3.setEndStateBounds('time', tiptoe_duration_bound(1), tiptoe_duration_bound(2));
 mode1.setInitialStateBounds('time', tiptoe_duration_bound(1), tiptoe_duration_bound(2));
@@ -71,7 +72,7 @@ mode1.setEndStateBounds('time', period_bound(1), period_bound(2));
 mode2.setInitialStateBounds('time', period_bound(1), period_bound(2));
 mode2.setEndStateBounds('time', period_bound(3), period_bound(4));
 
-ig.set_initial_guess(mode3, mode1, mode2, period, mean(tiptoe_duration_bound));
+ig.set_initial_guess(mode3, mode1, mode2, period, 0.01);
 
 ocp = ocl.MultiStageProblem({mode3,mode1,mode2}, ...
                             {@optimizer.trans_tiptoe_touchdown,@optimizer.trans_stand2float});

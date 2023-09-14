@@ -7,6 +7,7 @@ global flags
 M = SEA_model.M(params,x0);
 Jc1 = SEA_model.Jc1(params,x0);
 [q, dq, phi, dphi] = utils.decompose_state(x0);
+
 dq_after_lambda = [M,-Jc1.'; Jc1,zeros(3,3)] \ [M*dq; zeros(3,1)];
 dq_after = dq_after_lambda(1:10);
 ch.add(x0.xb  , '==', xF.xb  );

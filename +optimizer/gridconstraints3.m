@@ -37,7 +37,7 @@ function gridconstraints3(conh, k, K, x, p)
     end
   
     if k == 1
-      conh.add(dpj(6,2),'>=',0); %脚交換制約
+      %conh.add(dpj(6,2),'>=',0); %脚交換制約
       q0 = q;
       phi0 = phi;
       dq0 = dq;
