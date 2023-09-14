@@ -3,13 +3,26 @@ close all;
 clc;
 clear;
 global v step T flags
+global mode1N mode2N mode3N
+
+if exist('mode1N','var') == 0
+    disp("Global variables not initialized. Value defaulted.")
+    mode1N = 12;
+    mode2N = 10;
+    mode3N = 4;
+    v = 6.0;  % desired velocity
+    step = 1.5;
+end
+disp("Starting with ");
+disp([mode1N,mode2N,mode3N,v,step]);
+
 
 % ↓ optimization setting ↓
-v = 7.0;  % desired velocity
-step = 1.5;  % step (approximate)
+
+  % step (approximate)
 period = step/v;
 T = period;
-tiptoe_duration_bound = [0,0.5];
+tiptoe_duration_bound = [0,0.001];
 
 flags = Flags;
 flags.use_sea = true;
@@ -33,21 +46,21 @@ mode3 = ocl.Stage( ...
   'dae', @optimizer.dae3, ...
   'pathcosts', @optimizer.pathcosts, ...
   'gridconstraints', @optimizer.gridconstraints3, ...
-  'N', 4, 'd', 3); % Tiptoe Touchdown
+  'N', mode3N, 'd', 3); % Tiptoe Touchdown
 mode1 = ocl.Stage( ...
   [], ...
   'vars', @optimizer.vars1, ...
   'dae', @optimizer.dae1, ...
   'pathcosts', @optimizer.pathcosts, ...
   'gridconstraints', @optimizer.gridconstraints1, ...
-  'N', 12, 'd', 3); % With support leg
+  'N', mode1N, 'd', 3); % With support leg
 mode2 = ocl.Stage( ...
   [], ...
   'vars', @optimizer.vars2, ...
   'dae', @optimizer.dae2, ...
   'pathcosts', @optimizer.pathcosts, ...
   'gridconstraints', @optimizer.gridconstraints2, ...
-  'N', 14, 'd', 3); % Airborne!!!
+  'N', mode2N, 'd', 3); % Airborne!!!
 
 %                        1end  
 period_bound = period*[0.2, 0.7, 0.75, 1.25];

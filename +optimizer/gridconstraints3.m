@@ -19,14 +19,14 @@ function gridconstraints3(conh, k, K, x, p)
 
 
   conh.add(pj(5,2),'>=',0);
-  if(k==1)                  % かかとは初期空中
-    conh.add(pj(6,2),'>=',0.1);
-    conh.add(pj(6,2),'<=',0.3);
-    conh.add(pj(4,2),'>=',0.05);
-  else
-    conh.add(pj(7,2),'>=',0);   % つまさきは地面以上
-  end
-  
+%   if(k==1)                  % かかとは初期空中
+%     conh.add(pj(6,2),'>=',0.1);
+%     conh.add(pj(6,2),'<=',0.3);
+%     conh.add(pj(4,2),'>=',0.05);
+%   else
+%     conh.add(pj(7,2),'>=',0);   % つまさきは地面以上
+%   end
+  conh.add(pj(7,2),'>=',0);
   conh.add(pj(8,2),'>=',0); % 遊脚かかと
   
   %% 遊脚前進制約
@@ -44,10 +44,7 @@ function gridconstraints3(conh, k, K, x, p)
       dphi0 = dphi;
     end
 
-    if k >= 3
-      conh.add(ppphi-2*pphi+phi,'<=',2) %滑らか制約
-      conh.add(ppphi-2*pphi+phi,'>=',-2)
-    end
+    
   
   ppphi = pphi;
   pphi = phi;
