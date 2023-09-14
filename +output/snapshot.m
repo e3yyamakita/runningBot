@@ -5,10 +5,10 @@ hold on
 axis equal
 plot([-1.0 1.5],[0 0],'k')
 
-index = [1 2 3 4 result.state_size(1) result.state_size(1)+4 sum(result.state_size)];
-color = ['r' 'c' 'm' 'g' 'b' 'r' 'c'];
+index = [1:4:sum(result.state_size)];
+color = ['r' 'c' 'm' 'g' 'b'];
 for i = 1:length(index)
-  result.draw_line(index(i), color(i));
+  result.draw_line(index(i), color(mod(i,5)+1));
 end
 
 color = [0.6 0.6 0.6];

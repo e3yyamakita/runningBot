@@ -30,16 +30,30 @@ classdef InitialGuess
   end
   methods
     function ig = InitialGuess(step, draw)
-      ig.xb = [-step/3,-step/3,step/4,step*2/3];
-      ig.yb = [sqrt(0.8^2-(step/3)^2),sqrt(0.8^2-(step/3)^2),sqrt(0.8^2-(step/4)^2),sqrt(0.8^2-(step/3)^2)];
-      ig.thb = [pi,pi,pi,pi]*2/5;
-      ig.lw = [0.4, 0.4, 0.4, 0.4]*params.l7;
-      ig.th1 = [asin(step/3/0.8),asin(step/3/0.8),-asin(step/4/0.8),-asin(step/3/0.8)]+(pi+(pi/2-ig.thb));
-      ig.th2 = [0,0,0,-pi/4];
-      ig.th3 = [acos(step/3/0.8),acos(step/3/0.8),pi-acos(step/4/0.8),pi-acos(step/3/0.8)];
-      ig.th4 = [-asin(step/3/0.8),-asin(step/3/0.8),asin(step/4/0.8)+pi/5,asin(step/3/0.8)]+(pi+(pi/2-ig.thb));
-      ig.th5 = [-pi/4,-pi/4,-pi*3/5,0];
-      ig.th6 = [pi-acos(step/3/0.8),pi-acos(step/3/0.8),acos(step/4/0.8),acos(step/3/0.8)];
+        global mode1N mode2N mode3N
+%       ig.xb = [-step/6,-step/6,step/2,step];
+%       ig.yb = [sqrt(0.8^2-(step/3)^2),sqrt(0.8^2-(step/3)^2),sqrt(0.8^2-(step/4)^2),sqrt(0.8^2-(step/3)^2)];
+%       ig.thb = [pi,pi,pi,pi]*2/5;
+%       ig.lw = [0.5, 0.5, 0.5, 0.5]*params.l7;
+%       ig.th1 = [asin(step/3/0.8),asin(step/3/0.8),-asin(step/4/0.8),-asin(step/4/0.8)]+(pi+(pi/2-ig.thb));
+%       ig.th2 = [-pi/3,-pi/3,-pi/3,-pi/3];
+%       ig.th3 = [acos(step/3/0.8),acos(step/3/0.8),pi-acos(step/4/0.8),pi-acos(step/3/0.8)];
+%       ig.th4 = [-asin(step/4/0.8),-asin(step/4/0.8),asin(step/4/0.8)+pi/5,asin(step/3/0.8)]+(pi+(pi/2-ig.thb));
+%       ig.th5 = [-pi/3,-pi/2,-pi*3,0];
+%       ig.th6 = [pi-acos(step/3/0.8),pi-acos(step/3/0.8),acos(step/4/0.8),acos(step/4/0.8)];
+      
+      load("over_int_result.mat");
+      ig.xb = [result.xb(1),result.xb(1),result.xb(mode1N+mode3N+1),result.xb(end)];
+      ig.yb = [result.yb(1),result.yb(1),result.yb(mode1N+mode3N+1),result.yb(end)];
+      ig.thb = [result.thb(1),result.thb(1),result.thb(mode1N+mode3N+1),result.thb(end)];
+      ig.lw = [result.lw(1),result.lw(1),result.lw(mode1N+mode3N+1),result.lw(end)];
+      ig.th1 = [result.th1(1),result.th1(1),result.th1(mode1N+mode3N+1),result.th1(end)];
+      ig.th2 = [result.th2(1),result.th2(1),result.th2(mode1N+mode3N+1),result.th2(end)];
+      ig.th3 = [result.th3(1),result.th3(1),result.th3(mode1N+mode3N+1),result.th3(end)];
+      ig.th4 = [result.th4(1),result.th4(1),result.th4(mode1N+mode3N+1),result.th4(end)];
+      ig.th5 = [result.th5(1),result.th5(1),result.th5(mode1N+mode3N+1),result.th5(end)];
+      ig.th6 = [result.th6(1),result.th6(1),result.th6(mode1N+mode3N+1),result.th6(end)];
+      
       ig.phi1 = ig.th1;
       ig.phi2 = ig.th2;
       ig.phi3 = ig.th3;
