@@ -118,7 +118,12 @@ function dae1(daeh,x,z,u,p)
   daeh.setAlgEquation(DAE1(1));
   daeh.setAlgEquation(DAE1(2));
   daeh.setAlgEquation(DAE1(3));
-  daeh.setAlgEquation(DAE1(4));
+  if(flags.use_wobbling_mass)
+    daeh.setAlgEquation(DAE1(4));
+  else
+    DAE5 = [z.ddlw];
+    daeh.setAlgEquation(DAE5);
+  end
   daeh.setAlgEquation(DAE1(5));
   daeh.setAlgEquation(DAE1(6));
   daeh.setAlgEquation(DAE1(7));

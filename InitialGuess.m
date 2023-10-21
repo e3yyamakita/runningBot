@@ -22,6 +22,7 @@ classdef InitialGuess
     mw
     beta_ankle % inerters
     beta_knee
+    period
   end
   properties (Constant)
     zmp_x = [0, params.l3-params.a3];
@@ -42,17 +43,17 @@ classdef InitialGuess
 %       ig.th5 = [-pi/3,-pi/2,-pi*3,0];
 %       ig.th6 = [pi-acos(step/3/0.8),pi-acos(step/3/0.8),acos(step/4/0.8),acos(step/4/0.8)];
       
-      load("over_int_result.mat");
-      ig.xb = [result.xb(1),result.xb(1),result.xb(mode1N+mode3N+1),result.xb(end)];
-      ig.yb = [result.yb(1),result.yb(1),result.yb(mode1N+mode3N+1),result.yb(end)];
-      ig.thb = [result.thb(1),result.thb(1),result.thb(mode1N+mode3N+1),result.thb(end)];
-      ig.lw = [result.lw(1),result.lw(1),result.lw(mode1N+mode3N+1),result.lw(end)];
-      ig.th1 = [result.th1(1),result.th1(1),result.th1(mode1N+mode3N+1),result.th1(end)];
-      ig.th2 = [result.th2(1),result.th2(1),result.th2(mode1N+mode3N+1),result.th2(end)];
-      ig.th3 = [result.th3(1),result.th3(1),result.th3(mode1N+mode3N+1),result.th3(end)];
-      ig.th4 = [result.th4(1),result.th4(1),result.th4(mode1N+mode3N+1),result.th4(end)];
-      ig.th5 = [result.th5(1),result.th5(1),result.th5(mode1N+mode3N+1),result.th5(end)];
-      ig.th6 = [result.th6(1),result.th6(1),result.th6(mode1N+mode3N+1),result.th6(end)];
+      load("noninerter_forfoot.mat",'result');
+      ig.xb = [result.xb(1),result.xb(1),result.xb(1)+step/2,result.xb(1)+step];
+      ig.yb = [result.yb(1),result.yb(1),result.yb(sum(result.control_size([1,2]))),result.yb(1)];
+      ig.thb = [result.thb(1),result.thb(1),result.thb(sum(result.control_size([1,2]))),result.thb(1)];
+      ig.lw = [result.lw(1),result.lw(1),result.lw(sum(result.control_size([1,2]))),result.lw(1)];
+      ig.th1 = [result.th1(1),result.th1(1),result.th1(sum(result.control_size([1,2]))),result.th4(1)];
+      ig.th2 = [result.th2(1),result.th2(1),result.th2(sum(result.control_size([1,2]))),result.th5(1)];
+      ig.th3 = [result.th3(1),result.th3(1),result.th3(sum(result.control_size([1,2]))),result.th6(1)];
+      ig.th4 = [result.th4(1),result.th4(1),result.th4(sum(result.control_size([1,2]))),result.th1(1)];
+      ig.th5 = [result.th5(1),result.th5(1),result.th5(sum(result.control_size([1,2]))),result.th2(1)];
+      ig.th6 = [result.th6(1),result.th6(1),result.th6(sum(result.control_size([1,2]))),result.th3(1)];
       
       ig.phi1 = ig.th1;
       ig.phi2 = ig.th2;
@@ -66,6 +67,7 @@ classdef InitialGuess
       ig.mw = 0.5;
       ig.beta_ankle = 0.5;
       ig.beta_knee = 0.5;
+      ig.period = [0,0,0];
       if draw
         ig.draw();
       end
@@ -117,13 +119,13 @@ classdef InitialGuess
       end
     end
     
-    function set_initial_guess(obj, mode1, mode2, mode3, period, tiptoe_duration)
-      period1 = period*0.5;
-      period2 = period*0.5;
-      period = [tiptoe_duration, period1, period2];
-      utils.set_initial_guess(mode1, 1, obj, period);
-      utils.set_initial_guess(mode2, 2, obj, period);
-      utils.set_initial_guess(mode3, 3, obj, period);
+    function set_initial_guess(obj, mode1, mode2, mode3, period, tiptoe_dur)
+      period1 = period*0.3;
+      period2 = period*0.7;
+      obj.period = [tiptoe_dur, period1, period2];
+      utils.set_initial_guess(mode1, 1, obj, obj.period);
+      utils.set_initial_guess(mode2, 2, obj, obj.period);
+      utils.set_initial_guess(mode3, 3, obj, obj.period);
     end
   end
 end

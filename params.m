@@ -57,7 +57,9 @@ classdef params
         khip =  900;
         kknee = 1630;
         kankle = 947;
-        
+%         khip =  100;
+%         kknee = 100;
+%         kankle = 100;
         % inertia of SEA
         bhip = 0.02;
         bknee = 0.02;

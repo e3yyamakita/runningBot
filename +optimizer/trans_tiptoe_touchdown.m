@@ -42,6 +42,7 @@ ch.add(x0.dphi3, '==', xF.dphi3);
 ch.add(x0.dphi4, '==', xF.dphi4);
 ch.add(x0.dphi5, '==', xF.dphi5);
 ch.add(x0.dphi6, '==', xF.dphi6);
+
 if flags.optimize_k
   ch.add(x0.khip, '==', xF.khip);
   ch.add(x0.kknee, '==', xF.kknee);
@@ -54,5 +55,5 @@ if flags.use_inerter
   ch.add(x0.beta_ankle,'==',xF.beta_ankle);
   ch.add(x0.beta_knee,'==',xF.beta_knee);
 end
-ch.add(x0.time,'==',xF.time);
+ch.add(x0.time, '==', xF.time);
 end

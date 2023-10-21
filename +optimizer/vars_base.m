@@ -67,7 +67,7 @@ function vars_base(vh)
   vh.addState('time'  ,'lb',0);
   % params
   if flags.optimize_k
-    vh.addState('khip'  ,'lb',0, 'ub',1200);
+    vh.addState('khip'  ,'lb',0, 'ub',1200);    %TODO return to ori 1200
     vh.addState('kknee' ,'lb',0, 'ub',2000);
     vh.addState('kankle','lb',0, 'ub',2000);
     %vh.addState('bankle','lb',0);
@@ -107,7 +107,7 @@ function vars_base(vh)
     % vh.addControl('u4','lb',-50,'ub',50);
     % vh.addControl('u5','lb',-50,'ub',50);
     % vh.addControl('u6','lb', -30,'ub', 30);
-    vh.addControl('u1','lb',-300,'ub',300);
+    vh.addControl('u1','lb',-300,'ub',300); %TODO Original limit 300
     vh.addControl('u2','lb',-200,'ub',200);
     vh.addControl('u3','lb', -10,'ub', 10);
     vh.addControl('u4','lb',-300,'ub',300);
@@ -116,10 +116,10 @@ function vars_base(vh)
   else
     vh.addControl('u1','lb',-300,'ub',300);
     vh.addControl('u2','lb',-200,'ub',200);
-    vh.addControl('u3','lb', -10,'ub', 10);
+    vh.addControl('u3','lb', -100,'ub', 100);
     vh.addControl('u4','lb',-300,'ub',300);
     vh.addControl('u5','lb',-200,'ub',200);
-    vh.addControl('u6','lb', -10,'ub', 10);
+    vh.addControl('u6','lb', -100,'ub', 100);
   end
   
   if flags.use_wobbling_mass

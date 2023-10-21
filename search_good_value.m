@@ -1,14 +1,15 @@
-global mode1N mode2N mode3N v step
+global mode1N mode2N mode3N v step initialized
+initialized = 1;
 
-for mode1Now = 10
+for mode1Now = 8
     mode1N = mode1Now;
-    for mode2Now = 14
+    for mode2Now = 12
         mode2N = mode2Now;
-        for mode3Now = 1
+        for mode3Now = 3
             mode3N = mode3Now;
-                for vNow = 8
+                for vNow = 2.1
                     v = vNow;
-                    for stepNow = 1.5
+                    for stepNow = 0.65
                         step = stepNow;
                         main_run_optimization;
                         if(sol_info.success)

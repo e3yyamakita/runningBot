@@ -2,10 +2,11 @@
 close all;
 clc;
 clear;
-global v step T flags
+global v step T flags initialized
 global mode1N mode2N mode3N
 
-if exist('mode1N','var') == 0
+if initialized == 1
+else
     disp("Global variables not initialized. Value defaulted.")
     mode1N = 10;
     mode2N = 14;
@@ -14,16 +15,13 @@ if exist('mode1N','var') == 0
     step = 1.5;
 end
 
-disp("Starting with ");
-disp([mode1N,mode2N,mode3N,v,step]);
-
 
 % ↓ optimization setting ↓
 
   % step (approximate)
 period = step/v;
 T = period;
-tiptoe_duration_bound = [0,0.0001];
+tiptoe_duration_bound = [0,0.01];
 
 flags = Flags;
 flags.use_sea = true;
@@ -31,7 +29,7 @@ flags.use_wobbling_mass = true;
 flags.optimize_mw = true;
 flags.optimize_k = true;
 flags.use_inerter = false; %aoyama's inerter at knee and ankle
-flags.forefoot = false;  %forefoot running
+flags.forefoot = true;  %forefoot running
 flags.bird_leg = 0; %reversed knee
 flags.optimize_vmode = 0;   %1/v become function instead of SR
 flags.check()
@@ -64,7 +62,7 @@ mode2 = ocl.Stage( ...
   'N', mode2N, 'd', 3); % Airborne!!!
 
 %                        1end  
-period_bound = period*[0.3, 0.6, 0.8, 1.2];
+period_bound = period*[0.2, 0.4, 0.8, 1.2];
 mode3.setInitialStateBounds('time', 0);
 mode3.setEndStateBounds('time', tiptoe_duration_bound(1), tiptoe_duration_bound(2));
 mode1.setInitialStateBounds('time', tiptoe_duration_bound(1), tiptoe_duration_bound(2));
@@ -72,7 +70,9 @@ mode1.setEndStateBounds('time', period_bound(1), period_bound(2));
 mode2.setInitialStateBounds('time', period_bound(1), period_bound(2));
 mode2.setEndStateBounds('time', period_bound(3), period_bound(4));
 
-ig.set_initial_guess(mode3, mode1, mode2, period, 0.01);
+ig.set_initial_guess(mode3, mode1, mode2, period, 0.00001);
+% load('temp_result.mat', 'result')
+% utils.copy_initial_guess([mode3, mode1, mode2],result)
 
 ocp = ocl.MultiStageProblem({mode3,mode1,mode2}, ...
                             {@optimizer.trans_tiptoe_touchdown,@optimizer.trans_stand2float});
@@ -85,16 +85,20 @@ console_filename = ['+console/' datestr(exe_time,'yyyy-mm-dd_HH-MM-SS') '.log'];
 diary(console_filename)
 
 % solve
+disp("Starting with ");
+disp([mode1N,mode2N,mode3N,v,step]);
 [sol,times, sol_info] = ocp.solve();
 
 result = output.Result(sol, times, flags, sol_info);
 
 % save results to file
-[~,~]=mkdir('+results');
-result_filename = [datestr(exe_time,'yyyy-mm-dd_HH-MM-SS') '.mat'];
-save(['+results/' result_filename],'sol','times','result','flags','v','step');
+%if (sol_info.success || ~strcmp(sol_info.ipopt_stats.return_status,'Infeasible_Problem_Detected'))
+    [~,~]=mkdir('+results');
+    result_filename = [datestr(exe_time,'yyyy-mm-dd_HH-MM-SS') '.mat'];
+    save(['+results/' result_filename],'sol','times','result','flags','v','step');
 
-diary off;
-    
-data_name = [datestr(exe_time,'yyyy-mm-dd_HH-MM-SS')];
-output.result_txt(result,data_name);
+%     diary off;
+
+    data_name = [datestr(exe_time,'yyyy-mm-dd_HH-MM-SS')];
+    output.result_txt(result,data_name);
+%end
