@@ -112,7 +112,7 @@ function dae1(daeh,x,z,u,p)
   %DAE3 = sum(m)*[ddxcom; ddycom] - (-[0; sum(m)*g] + fe);
   %DAE4L = -xcom*sum(m)*g + z.zmp_x*z.fey;
   dL = I.'*ddth_abs + pcx.'*diag(m)*ddpcy - pcy.'*diag(m)*ddpcx;
-  DAE4 = z.zmp_x - (sum(m)*g*xcom + dL)/(sum(m)*(ddycom + g));
+  DAE3 = z.zmp_x - (sum(m)*g*xcom + dL)/(sum(m)*(ddycom + g));
 
   
   daeh.setAlgEquation(DAE1(1));
@@ -121,8 +121,8 @@ function dae1(daeh,x,z,u,p)
   if(flags.use_wobbling_mass)
     daeh.setAlgEquation(DAE1(4));
   else
-    DAE5 = [z.ddlw];
-    daeh.setAlgEquation(DAE5);
+    DAE4 = [z.ddlw];
+    daeh.setAlgEquation(DAE4);
   end
   daeh.setAlgEquation(DAE1(5));
   daeh.setAlgEquation(DAE1(6));
@@ -141,7 +141,7 @@ function dae1(daeh,x,z,u,p)
   daeh.setAlgEquation(DAE1(11));
   daeh.setAlgEquation(DAE1(12));
   daeh.setAlgEquation(DAE1(13));
-  daeh.setAlgEquation(DAE4(1));
+  daeh.setAlgEquation(DAE3(1));
   
   fprintf('dae1                   complete : %.2f seconds\n',toc);
 end

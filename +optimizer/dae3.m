@@ -93,9 +93,10 @@ function dae3(daeh,x,z,u,p)
   ddxcom = ddpcom(1); ddycom = ddpcom(2);
   Jtoe = SEA_model.Jtoe(params,x,z);
   dJtoe = SEA_model.dJtoe(params,x,z);
+
   Jc1 = SEA_model.Jc1(params,x);
   dJc1 = SEA_model.dJc1(params,x);
-  fe = [z.fex; z.fey];
+  
   
   if flags.use_sea
     tau = K*(phi-q(5:10,:));
@@ -103,15 +104,32 @@ function dae3(daeh,x,z,u,p)
     tau = U;
   end
   tau2 = [uw;tau];
-  if flags.use_inerter
-    DAE1 = [M+bm,-Jtoe.'; Jtoe,zeros(2,2)]*[ddq;fe] - [S*tau2-h; -dJtoe*dq];
-  else  
-    DAE1 = [M,-Jtoe.'; Jtoe,zeros(2,2)]*[ddq;fe] - [S*tau2-h; -dJtoe*dq];
+  if flags.forefoot
+      fe = [z.fex; z.fey];
+      if flags.use_inerter
+        DAE1 = [M+bm,-Jtoe.'; Jtoe,zeros(2,2)]*[ddq;fe] - [S*tau2-h; -dJtoe*dq];
+      else  
+        DAE1 = [M,-Jtoe.'; Jtoe,zeros(2,2)]*[ddq;fe] - [S*tau2-h; -dJtoe*dq];
+      end
+  else
+      Jzmp = SEA_model.Jzmp(params,x,z);
+      dJzmp = SEA_model.dJzmp(params,x,z);      
+      fe = [z.fex; z.fey; z.feth];
+      if flags.use_inerter
+        DAE1 = [M+bm,-Jzmp.'; Jzmp,zeros(3,3)]*[ddq;fe] - [S*tau2-h; -dJzmp*dq];
+      else  
+        DAE1 = [M,-Jzmp.'; Jzmp,zeros(3,3)]*[ddq;fe] - [S*tau2-h; -dJzmp*dq];
+      end
   end
   DAE2 = B*ddphi - (U-tau);
   %DAE3 = sum(m)*[ddxcom; ddycom] - (-[0; sum(m)*g] + fe);
   %DAE4L = -xcom*sum(m)*g + z.zmp_x*z.fey;
-  DAE3 = [z.feth];
+  if flags.forefoot
+    DAE3 = [z.feth];
+  else
+    dL = I.'*ddth_abs + pcx.'*diag(m)*ddpcy - pcy.'*diag(m)*ddpcx;
+    DAE3 = z.zmp_x - (sum(m)*g*xcom + dL)/(sum(m)*(ddycom + g));
+  end
   
   daeh.setAlgEquation(DAE1(1));
   daeh.setAlgEquation(DAE1(2));
@@ -139,5 +157,9 @@ function dae3(daeh,x,z,u,p)
   daeh.setAlgEquation(DAE1(11));
   daeh.setAlgEquation(DAE1(12));
   daeh.setAlgEquation(DAE3(1));
+  
+  if ~flags.forefoot
+      daeh.setAlgEquation(DAE1(13));
+  end
   fprintf('dae3                   complete : %.2f seconds\n',toc);
 end

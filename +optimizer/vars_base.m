@@ -19,7 +19,7 @@ function vars_base(vh)
     vh.addState('th5', 'lb',    pi/4,'ub',       3/4*pi); % 膝角度
     vh.addState('th6', 'lb',       0,'ub',       3/4*pi); % 足首角度
   else
-    vh.addState('th1', 'lb',  pi,'ub',     3/2*pi);
+    vh.addState('th1', 'lb',  pi,'ub',     7/4*pi);
     vh.addState('th2', 'lb', -3/4*pi,'ub',            0); % 膝角度
     vh.addState('th3', 'lb',  pi/4,'ub',       3/4*pi); % 足首角度 
     vh.addState('th4', 'lb',  pi,'ub',     7/4*pi);
@@ -100,30 +100,38 @@ function vars_base(vh)
 
 
   % Control u
-  if flags.optimize_vmode 
-    % vh.addControl('u1','lb',-50,'ub',50); % dynamixel PH54-200-S500-R
-    % vh.addControl('u2','lb',-50,'ub',50);
-    % vh.addControl('u3','lb', -30,'ub', 30);
-    % vh.addControl('u4','lb',-50,'ub',50);
-    % vh.addControl('u5','lb',-50,'ub',50);
-    % vh.addControl('u6','lb', -30,'ub', 30);
-    vh.addControl('u1','lb',-300,'ub',300); %TODO Original limit 300
+%   if flags.optimize_vmode 
+    vh.addControl('u1','lb',-300,'ub',300);
     vh.addControl('u2','lb',-200,'ub',200);
     vh.addControl('u3','lb', -10,'ub', 10);
     vh.addControl('u4','lb',-300,'ub',300);
     vh.addControl('u5','lb',-200,'ub',200);
     vh.addControl('u6','lb', -10,'ub', 10);
-  else
-    vh.addControl('u1','lb',-300,'ub',300);
-    vh.addControl('u2','lb',-200,'ub',200);
-    vh.addControl('u3','lb', -100,'ub', 100);
-    vh.addControl('u4','lb',-300,'ub',300);
-    vh.addControl('u5','lb',-200,'ub',200);
-    vh.addControl('u6','lb', -100,'ub', 100);
-  end
+    
+%     vh.addControl('u1','lb',-100,'ub',100); %TODO Original limit 300,200,100
+%     vh.addControl('u2','lb',-80,'ub',80);
+%     vh.addControl('u3','lb', -10,'ub', 10);
+%     vh.addControl('u4','lb',-100,'ub',100);
+%     vh.addControl('u5','lb',-80,'ub',80);
+%     vh.addControl('u6','lb', -10,'ub', 10);
+%   else
+%     vh.addControl('u1','lb',-100,'ub',100);
+%     vh.addControl('u2','lb',-80,'ub',80);
+%     vh.addControl('u3','lb', -10,'ub', 10);
+%     vh.addControl('u4','lb',-100,'ub',100);
+%     vh.addControl('u5','lb',-80,'ub',80);
+%     vh.addControl('u6','lb', -10,'ub', 10);
+    
+%     vh.addControl('u1','lb', -80,'ub', 80);
+%     vh.addControl('u2','lb', -40,'ub', 40);
+%     vh.addControl('u3','lb', -20,'ub', 20);
+%     vh.addControl('u4','lb', -80,'ub', 80);
+%     vh.addControl('u5','lb', -40,'ub', 40);
+%     vh.addControl('u6','lb', -20,'ub', 20);
+%   end
   
   if flags.use_wobbling_mass
-    vh.addControl('uw','lb',-100,'ub',100);
+    vh.addControl('uw','lb',-10,'ub',10);
   else
     vh.addControl('uw','lb',0,'ub',0);
   end

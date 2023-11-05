@@ -17,7 +17,7 @@ hold on
 axis equal
 ylim([-0.2 1.8])
 xlim([-0.8 result.step*loop+0.5])
-formatSpec = 'time: %.4f';
+formatSpec = 'Forefoot vel optimization; time: %.4f';
 title_handle = title(sprintf(formatSpec, 0.0));
 
 
@@ -80,7 +80,13 @@ for n=1:loop
 
       % pcom = result.calc_pcom(k)+[(n-1)*step, 0];
       
-      zmp_x = result.zmp_x(k2) + (n-1)*step;
+      if (k2 > result.algvars_size(1)) &&(result.flags.forefoot)
+        zmp_x = result.zmp_x(k2-result.algvars_size(1)) + (n-1)*step;
+      elseif ~(result.flags.forefoot)
+          zmp_x = result.zmp_x(k2) + (n-1)*step;
+      else
+          zmp_x = 0;
+      end
       if t > 0
           pause(v_period/playratio-toc);
           delete(l1);
@@ -92,6 +98,7 @@ for n=1:loop
           delete(l7);
           delete(l8);
           delete(l9);
+          
           %delete(l10);
       end
       
@@ -100,10 +107,15 @@ for n=1:loop
         k = k + 1;
       end
       % 現在時刻がresult.algvars_time(k2)を上回ったらk2をインクリメント
-      while(t>=result.algvars_time(k2) && k2 < result.algvars_size(1))
-        k2 = k2 + 1;
+      if result.flags.forefoot
+          while(t>=result.algvars_time(k2) && k2 < result.algvars_size(1)+result.algvars_size(2))
+            k2 = k2 + 1;
+          end
+      else
+        while(t>=result.algvars_time(k2) && k2 < result.algvars_size(1))
+            k2 = k2 + 1;
+        end
       end
-      
       tic;
       hold on;
       l1 = line([q(1)   ,pj(1,1)],[q(2)   ,pj(1,2)]);
@@ -114,7 +126,9 @@ for n=1:loop
       l6 = line([pj(7,1),pj(8,1)],[pj(7,2),pj(8,2)]);
       l7 = line([q(1)   ,pj(9,1)],[q(2)   ,pj(9,2)]);
       l8 = plot(pj(10,1),pj(10,2),'o','color',[38,124,185]/255,'MarkerSize',7);
-      if t < result.algvars_time(result.algvars_size(1))
+      l9 = plot(0, 0, '.', 'color', 'k', 'MarkerSize', 0.01);
+      if t < result.algvars_time(result.algvars_size(1)+result.algvars_size(2)) && ...
+         (t < result.algvars_time(result.algvars_size(1)) || ~result.flags.forefoot) 
          l9 = plot(zmp_x, 0, 'o', 'color', 'r', 'MarkerSize', 2);
       end
       %l10 = plot(pcom(1), pcom(2) ,'o','color','y','MarkerSize',5);
@@ -145,7 +159,6 @@ for n=1:loop
     delete(l8);
     delete(l9);
     %delete(l10);
-  end
 end
   if save_video
       close(v);

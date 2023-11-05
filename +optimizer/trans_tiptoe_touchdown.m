@@ -8,8 +8,14 @@ M = SEA_model.M(params,x0);
 Jc1 = SEA_model.Jc1(params,x0);
 [q, dq, phi, dphi] = utils.decompose_state(x0);
 
-dq_after_lambda = [M,-Jc1.'; Jc1,zeros(3,3)] \ [M*dq; zeros(3,1)];
-dq_after = dq_after_lambda(1:10);
+if flags.forefoot
+    dq_after_lambda = [M,-Jc1.'; Jc1,zeros(3,3)] \ [M*dq; zeros(3,1)];
+    dq_after = dq_after_lambda(1:10);
+else
+    [~,dq_F,~,~] = utils.decompose_state(xF);
+    dq_after = dq_F;
+end
+
 ch.add(x0.xb  , '==', xF.xb  );
 ch.add(x0.yb  , '==', xF.yb  );
 ch.add(x0.thb , '==', xF.thb );

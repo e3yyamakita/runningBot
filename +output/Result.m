@@ -155,9 +155,12 @@ classdef Result
         obj.feth = [obj.feth, sol{i}.integrator.algvars.feth.value];
 
       end
+      if obj.flags.forefoot
+        obj.zmp_x = [sol{2}.integrator.algvars.zmp_x.value];
+      else
+        obj.zmp_x = [sol{1}.integrator.algvars.zmp_x.value];
+      end
       
-      obj.zmp_x = sol{2}.integrator.algvars.zmp_x.value;
-
       for i=1:length(sol)
         if i == 1
           obj.control_time = times{i}.controls.value;
@@ -216,14 +219,21 @@ classdef Result
       obj.dphi4(del) = []; obj.dphi5(del) = []; obj.dphi6(del) = [];
       obj.pjx(:,del) = []; obj.pjy(:,del) = [];
       obj.time(del) = [];
-      obj.state_size = obj.state_size - [0 1 2];
-      
+      if obj.flags.forefoot
+        obj.state_size = obj.state_size - [0 1 2];
+      else
+        obj.state_size = obj.state_size - [0 1];
+      end
       
       del = obj.control_size(1);
       obj.u1(del) = []; obj.u2(del) = []; obj.u3(del) = [];
       obj.u4(del) = []; obj.u5(del) = []; obj.u6(del) = [];
       obj.uw(del) = []; obj.control_time(del) = [];
-      obj.control_size = obj.control_size - [0 1 2];
+      if obj.flags.forefoot
+        obj.state_size = obj.control_size - [0 1 2];
+      else
+        obj.state_size = obj.control_size - [0 1];
+      end
       
       %{
       del = obj.algvars_size(1);

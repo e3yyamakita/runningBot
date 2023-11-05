@@ -16,6 +16,13 @@ classdef InitialGuess
     phi4
     phi5
     phi6
+    u1
+    u2
+    u3
+    u4
+    u5
+    u6
+    uw
     kknee
     khip
     kankle
@@ -32,28 +39,39 @@ classdef InitialGuess
   methods
     function ig = InitialGuess(step, draw)
         global mode1N mode2N mode3N
-%       ig.xb = [-step/6,-step/6,step/2,step];
+%       ig.xb = [-step/3,-step/3,step/4,step*2/3];
 %       ig.yb = [sqrt(0.8^2-(step/3)^2),sqrt(0.8^2-(step/3)^2),sqrt(0.8^2-(step/4)^2),sqrt(0.8^2-(step/3)^2)];
 %       ig.thb = [pi,pi,pi,pi]*2/5;
-%       ig.lw = [0.5, 0.5, 0.5, 0.5]*params.l7;
-%       ig.th1 = [asin(step/3/0.8),asin(step/3/0.8),-asin(step/4/0.8),-asin(step/4/0.8)]+(pi+(pi/2-ig.thb));
-%       ig.th2 = [-pi/3,-pi/3,-pi/3,-pi/3];
+%       ig.lw = [0.4, 0.4, 0.4, 0.4]*params.l7;
+%       ig.th1 = [asin(step/3/0.8),asin(step/3/0.8),-asin(step/4/0.8),-asin(step/3/0.8)]+(pi+(pi/2-ig.thb));
+%       ig.th2 = [0,0,0,-pi/4];
 %       ig.th3 = [acos(step/3/0.8),acos(step/3/0.8),pi-acos(step/4/0.8),pi-acos(step/3/0.8)];
-%       ig.th4 = [-asin(step/4/0.8),-asin(step/4/0.8),asin(step/4/0.8)+pi/5,asin(step/3/0.8)]+(pi+(pi/2-ig.thb));
-%       ig.th5 = [-pi/3,-pi/2,-pi*3,0];
-%       ig.th6 = [pi-acos(step/3/0.8),pi-acos(step/3/0.8),acos(step/4/0.8),acos(step/4/0.8)];
+%       ig.th4 = [-asin(step/3/0.8),-asin(step/3/0.8),asin(step/4/0.8)+pi/5,asin(step/3/0.8)]+(pi+(pi/2-ig.thb));
+%       ig.th5 = [-pi/4,-pi/4,-pi*3/5,0];
+%       ig.th6 = [pi-acos(step/3/0.8),pi-acos(step/3/0.8),acos(step/4/0.8),acos(step/3/0.8)];
       
-      load("noninerter_forfoot.mat",'result');
-      ig.xb = [result.xb(1),result.xb(1),result.xb(1)+step/2,result.xb(1)+step];
-      ig.yb = [result.yb(1),result.yb(1),result.yb(sum(result.control_size([1,2]))),result.yb(1)];
-      ig.thb = [result.thb(1),result.thb(1),result.thb(sum(result.control_size([1,2]))),result.thb(1)];
-      ig.lw = [result.lw(1),result.lw(1),result.lw(sum(result.control_size([1,2]))),result.lw(1)];
-      ig.th1 = [result.th1(1),result.th1(1),result.th1(sum(result.control_size([1,2]))),result.th4(1)];
-      ig.th2 = [result.th2(1),result.th2(1),result.th2(sum(result.control_size([1,2]))),result.th5(1)];
-      ig.th3 = [result.th3(1),result.th3(1),result.th3(sum(result.control_size([1,2]))),result.th6(1)];
-      ig.th4 = [result.th4(1),result.th4(1),result.th4(sum(result.control_size([1,2]))),result.th1(1)];
-      ig.th5 = [result.th5(1),result.th5(1),result.th5(sum(result.control_size([1,2]))),result.th2(1)];
-      ig.th6 = [result.th6(1),result.th6(1),result.th6(sum(result.control_size([1,2]))),result.th3(1)];
+      %load("slow_init.mat",'result');
+      load("fast_init.mat",'result');
+      %load("noninerter_forfoot.mat",'result');
+      %load("aoyama_ver_result.mat",'result');
+      %load("close_result.mat",'result');
+      ig.xb = [result.xb(1),result.xb(2),result.xb(1)+step/2,result.xb(1)+step];
+      ig.yb = [result.yb(1),result.yb(2),result.yb(sum(result.control_size([1,2]))),result.yb(1)];
+      ig.thb = [result.thb(1),result.thb(2),result.thb(sum(result.control_size([1,2]))),result.thb(1)];
+      ig.lw = [result.lw(1),result.lw(2),result.lw(sum(result.control_size([1,2]))),result.lw(1)];
+      ig.th1 = [result.th1(1),result.th1(2),result.th1(sum(result.control_size([1,2]))),result.th4(1)];
+      ig.th2 = [result.th2(1),result.th2(2),result.th2(sum(result.control_size([1,2]))),result.th5(1)];
+      ig.th3 = [result.th3(1),result.th3(2),result.th3(sum(result.control_size([1,2]))),result.th6(1)];
+      ig.th4 = [result.th4(1),result.th4(2),result.th4(sum(result.control_size([1,2]))),result.th1(1)];
+      ig.th5 = [result.th5(1),result.th5(2),result.th5(sum(result.control_size([1,2]))),result.th2(1)];
+      ig.th6 = [result.th6(1),result.th6(2),result.th6(sum(result.control_size([1,2]))),result.th3(1)];
+      ig.u1 = [result.u1(1),result.u1(2),result.u1(sum(result.control_size([1,2]))),result.u1(1)];
+      ig.u2 = [result.u2(1),result.u2(2),result.u2(sum(result.control_size([1,2]))),result.u2(1)];
+      ig.u3 = [result.u3(1),result.u3(2),result.u3(sum(result.control_size([1,2]))),result.u3(1)];
+      ig.u4 = [result.u4(1),result.u4(2),result.u4(sum(result.control_size([1,2]))),result.u4(1)];
+      ig.u5 = [result.u5(1),result.u5(2),result.u5(sum(result.control_size([1,2]))),result.u5(1)];
+      ig.u6 = [result.u6(1),result.u6(2),result.u6(sum(result.control_size([1,2]))),result.u6(1)];
+      ig.uw = [result.uw(1),result.uw(2),result.uw(sum(result.control_size([1,2]))),result.uw(1)];
       
       ig.phi1 = ig.th1;
       ig.phi2 = ig.th2;
@@ -120,8 +138,8 @@ classdef InitialGuess
     end
     
     function set_initial_guess(obj, mode1, mode2, mode3, period, tiptoe_dur)
-      period1 = period*0.3;
-      period2 = period*0.7;
+      period1 = period*0.4;
+      period2 = period*0.6;
       obj.period = [tiptoe_dur, period1, period2];
       utils.set_initial_guess(mode1, 1, obj, obj.period);
       utils.set_initial_guess(mode2, 2, obj, obj.period);
