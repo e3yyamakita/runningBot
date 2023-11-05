@@ -17,7 +17,7 @@ function gridconstraints3(conh, k, K, x, p)
   %conh.add(pj(2,2),'>=',0); % Supp ankle
   if flags.forefoot
       conh.add(pj(3,2),'==',0); % Supp Toe
-      if ~(k==K) 
+      if ~(k==1) 
         conh.add(pj(4,2),'>=',1e-6); % Supp heel
       end
   else
@@ -34,11 +34,11 @@ function gridconstraints3(conh, k, K, x, p)
   
   %% 遊脚前進制約
   if flags.forefoot
-    if k == K
+    if k == 1
         conh.add(dpj(2,2),'<=',0); %脚交換制約
         conh.add(pj(4,2),'==',0);  % 支持脚かかと
         % Impact condition is in transition function
-    elseif k == 1
+    elseif k == K
         conh.add(pj(4,2),'>=',1e-6);  % 支持脚かかと
     end
   end

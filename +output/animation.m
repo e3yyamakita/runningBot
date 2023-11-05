@@ -80,13 +80,14 @@ for n=1:loop
 
       % pcom = result.calc_pcom(k)+[(n-1)*step, 0];
       
-      if (k2 > result.algvars_size(1)) &&(result.flags.forefoot)
-        zmp_x = result.zmp_x(k2-result.algvars_size(1)) + (n-1)*step;
-      elseif ~(result.flags.forefoot)
-          zmp_x = result.zmp_x(k2) + (n-1)*step;
-      else
-          zmp_x = 0;
-      end
+%       if (k2 > result.algvars_size(1)) &&(result.flags.forefoot)
+%         zmp_x = result.zmp_x(k2-result.algvars_size(1)) + (n-1)*step;
+%       elseif ~(result.flags.forefoot)
+%           zmp_x = result.zmp_x(k2) + (n-1)*step;
+%       else
+%           zmp_x = 0;
+%       end
+
       if t > 0
           pause(v_period/playratio-toc);
           delete(l1);
@@ -97,7 +98,7 @@ for n=1:loop
           delete(l6);
           delete(l7);
           delete(l8);
-          delete(l9);
+          %delete(l9);
           
           %delete(l10);
       end
@@ -108,7 +109,7 @@ for n=1:loop
       end
       % 現在時刻がresult.algvars_time(k2)を上回ったらk2をインクリメント
       if result.flags.forefoot
-          while(t>=result.algvars_time(k2) && k2 < result.algvars_size(1)+result.algvars_size(2))
+          while(t>=result.algvars_time(k2) && k2 < result.algvars_size(1)+result.algvars_size(2)+result.algvars_size(3))
             k2 = k2 + 1;
           end
       else
@@ -126,11 +127,11 @@ for n=1:loop
       l6 = line([pj(7,1),pj(8,1)],[pj(7,2),pj(8,2)]);
       l7 = line([q(1)   ,pj(9,1)],[q(2)   ,pj(9,2)]);
       l8 = plot(pj(10,1),pj(10,2),'o','color',[38,124,185]/255,'MarkerSize',7);
-      l9 = plot(0, 0, '.', 'color', 'k', 'MarkerSize', 0.01);
-      if t < result.algvars_time(result.algvars_size(1)+result.algvars_size(2)) && ...
-         (t < result.algvars_time(result.algvars_size(1)) || ~result.flags.forefoot) 
-         l9 = plot(zmp_x, 0, 'o', 'color', 'r', 'MarkerSize', 2);
-      end
+      %l9 = plot(0, 0, '.', 'color', 'k', 'MarkerSize', 0.01);
+%       if t < result.algvars_time(result.algvars_size(1)+result.algvars_size(2)) && ...
+%          (t < result.algvars_time(result.algvars_size(1)) || ~result.flags.forefoot) 
+%          l9 = plot(zmp_x, 0, 'o', 'color', 'r', 'MarkerSize', 2);
+%       end
       %l10 = plot(pcom(1), pcom(2) ,'o','color','y','MarkerSize',5);
       
       %{
@@ -157,7 +158,7 @@ for n=1:loop
     delete(l6);
     delete(l7);
     delete(l8);
-    delete(l9);
+    %delete(l9);
     %delete(l10);
 end
   if save_video

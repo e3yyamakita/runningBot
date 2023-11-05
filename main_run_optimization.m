@@ -33,7 +33,7 @@ flags.optimize_k = true;
 flags.use_inerter = false; %aoyama's inerter at knee and ankle
 flags.forefoot = true;  %forefoot running
 flags.bird_leg = 0; %reversed knee
-flags.optimize_vmode = 0;   %1/v become function instead of SR
+flags.optimize_vmode = 1;   %1/v become function instead of SR
 flags.check()
 % ↑ optimization setting ↑
 
@@ -88,11 +88,24 @@ if flags.forefoot
    mode3.setEndStateBounds('time', tiptoe_duration_bound(1), tiptoe_duration_bound(2));
    
    utils.copy_initial_guess_complete(mode3,3,result)
+   
+  mode4 = ocl.Stage( ...
+  [], ...
+  'vars', @optimizer.vars4, ...
+  'dae', @optimizer.dae4, ...
+  'pathcosts', @optimizer.pathcosts, ...
+  'gridconstraints', @optimizer.gridconstraints3, ...
+  'N', mode3N, 'd', 3); % Tiptoe Touchdown
+    
+   mode4.setInitialStateBounds('time', period_bound(1),period_bound(2));
+   mode4.setEndStateBounds('time', period_bound(1)+tiptoe_duration_bound(1), period_bound(2)+tiptoe_duration_bound(2));
+   
+   utils.copy_initial_guess_complete(mode4,4,result)
 end
 
 if flags.forefoot
-    ocp = ocl.MultiStageProblem({mode3,mode1,mode2}, ...
-                            {@optimizer.trans_tiptoe_touchdown,@optimizer.trans_stand2float});
+    ocp = ocl.MultiStageProblem({mode3,mode1,mode4,mode2}, ...
+                            {@optimizer.trans_tiptoe_touchdown,@optimizer.trans_stand2float,@optimizer.trans_stand2float});
 else
     ocp = ocl.MultiStageProblem({mode1,mode2}, ...
                             {@optimizer.trans_stand2float});

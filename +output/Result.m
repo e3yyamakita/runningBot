@@ -206,46 +206,57 @@ classdef Result
       obj.solve_time = sol_info.timeMeasures.solveTotal;
 
       % ダブり要素の削除
-      del = obj.state_size(1);
-      obj.xb(del) = []; obj.yb(del) = []; obj.thb(del) = []; obj.lw(del) = [];
-      obj.th1(del) = []; obj.th2(del) = []; obj.th3(del) = [];
-      obj.th4(del) = []; obj.th5(del) = []; obj.th6(del) = [];
-      obj.phi1(del) = []; obj.phi2(del) = []; obj.phi3(del) = [];
-      obj.phi4(del) = []; obj.phi5(del) = []; obj.phi6(del) = [];
-      obj.dxb(del) = []; obj.dyb(del) = []; obj.dthb(del) = []; obj.dlw(del) = [];
-      obj.dth1(del) = []; obj.dth2(del) = []; obj.dth3(del) = [];
-      obj.dth4(del) = []; obj.dth5(del) = []; obj.dth6(del) = [];
-      obj.dphi1(del) = []; obj.dphi2(del) = []; obj.dphi3(del) = [];
-      obj.dphi4(del) = []; obj.dphi5(del) = []; obj.dphi6(del) = [];
-      obj.pjx(:,del) = []; obj.pjy(:,del) = [];
-      obj.time(del) = [];
-      if obj.flags.forefoot
-        obj.state_size = obj.state_size - [0 1 2];
-      else
-        obj.state_size = obj.state_size - [0 1];
-      end
+%       del_pos = zeros(1,length(sol));
+%       for i = 1:length(del_pos)
+%           del_pos(i) = sum(obj.state_size(length(sol)-i+1:-1:1));
+%       end
+%       for del = del_pos
+%           obj.xb(del) = []; obj.yb(del) = []; obj.thb(del) = []; obj.lw(del) = [];
+%           obj.th1(del) = []; obj.th2(del) = []; obj.th3(del) = [];
+%           obj.th4(del) = []; obj.th5(del) = []; obj.th6(del) = [];
+%           obj.phi1(del) = []; obj.phi2(del) = []; obj.phi3(del) = [];
+%           obj.phi4(del) = []; obj.phi5(del) = []; obj.phi6(del) = [];
+%           obj.dxb(del) = []; obj.dyb(del) = []; obj.dthb(del) = []; obj.dlw(del) = [];
+%           obj.dth1(del) = []; obj.dth2(del) = []; obj.dth3(del) = [];
+%           obj.dth4(del) = []; obj.dth5(del) = []; obj.dth6(del) = [];
+%           obj.dphi1(del) = []; obj.dphi2(del) = []; obj.dphi3(del) = [];
+%           obj.dphi4(del) = []; obj.dphi5(del) = []; obj.dphi6(del) = [];
+%           obj.pjx(:,del) = []; obj.pjy(:,del) = [];
+%           obj.time(del) = [];
+%       end
+%       for i = 2:length(obj.state_size)
+%           obj.state_size(i) = obj.state_size(i)-1;
+%       end
+%       
+%       for i = 1:length(del_pos)
+%           del_pos(i) = sum(obj.control_size(length(sol)-i+1:-1:1));
+%       end
+%       for del = del_pos
+%           obj.u1(del) = []; obj.u2(del) = []; obj.u3(del) = [];
+%           obj.u4(del) = []; obj.u5(del) = []; obj.u6(del) = [];
+%           obj.uw(del) = []; obj.control_time(del) = [];
+%       end
+%       for i = 2:length(obj.control_size)
+%           obj.control_size(i) = obj.control_size(i)-1;
+%       end
+%       
+%       
+%       for i = 1:length(del_pos)
+%           del_pos(i) = sum(obj.algvars_size(length(sol)-i+1:-1:1));
+%       end
+%       for del = del_pos
+%           obj.algvars_time(del) = [];
+%           obj.ddxb(del) = []; obj.ddyb(del) = []; obj.ddthb(del) = []; obj.ddlw(del) = [];
+%           obj.ddth1(del) = []; obj.ddth2(del) = []; obj.ddth3(del) = [];
+%           obj.ddth4(del) = []; obj.ddth5(del) = []; obj.ddth6(del) = [];
+%           obj.ddphi1(del) = []; obj.ddphi2(del) = []; obj.ddphi3(del) = [];
+%           obj.ddphi4(del) = []; obj.ddphi5(del) = []; obj.ddphi6(del) = [];
+%           obj.fex(del) = []; obj.fey(del) = [];
+%       end
+%       for i = 2:length(obj.algvars_size)
+%           obj.algvars_size(i) = obj.algvars_size(i)-1;
+%       end
       
-      del = obj.control_size(1);
-      obj.u1(del) = []; obj.u2(del) = []; obj.u3(del) = [];
-      obj.u4(del) = []; obj.u5(del) = []; obj.u6(del) = [];
-      obj.uw(del) = []; obj.control_time(del) = [];
-      if obj.flags.forefoot
-        obj.state_size = obj.control_size - [0 1 2];
-      else
-        obj.state_size = obj.control_size - [0 1];
-      end
-      
-      %{
-      del = obj.algvars_size(1);
-      obj.algvars_time(del) = [];
-      obj.ddxb(del) = []; obj.ddyb(del) = []; obj.ddthb(del) = []; obj.ddlw(del) = [];
-      obj.ddth1(del) = []; obj.ddth2(del) = []; obj.ddth3(del) = [];
-      obj.ddth4(del) = []; obj.ddth5(del) = []; obj.ddth6(del) = [];
-      obj.ddphi1(del) = []; obj.ddphi2(del) = []; obj.ddphi3(del) = [];
-      obj.ddphi4(del) = []; obj.ddphi5(del) = []; obj.ddphi6(del) = [];
-      obj.fex(del) = []; obj.fey(del) = [];
-      obj.algvars_size = obj.algvars_size - [0 1];
-      %}
     end
     function pj = calc_pj(obj, k)
         q = [obj.xb(k);obj.yb(k);obj.thb(k);obj.lw(k); ...
@@ -313,14 +324,25 @@ classdef Result
     end
     
     function separate_background_with_section(obj, version)
+        
         if strcmp(version, 'state')
-          idx = [1 obj.state_size(1) sum(obj.state_size(1:2)) sum(obj.state_size)];
-          section = obj.time(idx);
+          idx = [1:length(obj.state_size)+1];
+          for i = 1:length(obj.state_size)
+            idx(i+1) = sum(obj.state_size(1:i));
+          end
+            section = obj.time(idx);
         elseif strcmp(version, 'control')
-          idx = [1 obj.control_size(1) sum(obj.control_size(1:2)) sum(obj.control_size)];
+          idx = [1:length(obj.control_size)+1];
+          for i = 1:length(obj.control_size)
+            idx(i+1) = sum(obj.control_size(1:i));
+          end
           section = obj.control_time(idx);
         elseif strcmp(version, 'algvars')
-          idx = [1 obj.algvars_size(1) sum(obj.algvars_size(1:2))-1 sum(obj.algvars_size)];
+          idx = [1:length(obj.algvars_size)+1];
+          for i = 1:length(obj.algvars_size)
+
+              idx(i+1) = sum(obj.algvars_size(1:i));
+          end
           section = obj.algvars_time(idx);
         else
           throw('Invalid Argument of Version');
@@ -329,7 +351,8 @@ classdef Result
         %color = {'r', 'b'};
         utils.back_coloring(section(1:2), color{1});
         utils.back_coloring(section(2:3), color{2});
-        utils.back_coloring([section(3), inf], color{1});
+        utils.back_coloring(section(3:4), color{1});
+        utils.back_coloring([section(4), inf], color{2});
     end
   end
   

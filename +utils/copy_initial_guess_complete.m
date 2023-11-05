@@ -33,7 +33,7 @@ end
         algvars_time_grid = normalize(source.algvars_time(algvars_data_grid)-source.algvars_time(source.algvars_size(1)+1),'range');
         
         mode.initialize('time', state_time_grid,...
-            source.time(source.state_size(1)+1:source.state_size(2))+tiptoe_bound_init_guess*ones(size(state_time_grid)));
+            source.time(state_data_grid)+tiptoe_bound_init_guess*ones(size(state_time_grid)));
     elseif mode_N == 3
         
         state_data_grid = [1 1];
@@ -47,6 +47,17 @@ end
         
         mode.initialize('time', [0 1], [0 tiptoe_bound_init_guess]);
        
+    elseif mode_N == 4
+        state_data_grid = [source.state_size(1) source.state_size(1)];
+        state_time_grid = [0 1];
+        
+        control_data_grid = [source.control_size(1) source.control_size(1)];
+        control_time_grid = [0 1];
+        
+        algvars_data_grid = [source.algvars_size(1) source.algvars_size(1)];
+        algvars_time_grid = [0 1];
+        
+        mode.initialize('time', [0 1], source.time(state_data_grid)+tiptoe_bound_init_guess*ones(size(state_time_grid)));
     end
     
         mode.initialize('xb'  , state_time_grid, source.xb(state_data_grid));
