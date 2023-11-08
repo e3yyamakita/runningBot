@@ -17,7 +17,7 @@ hold on
 axis equal
 ylim([-0.2 1.8])
 xlim([-0.8 result.step*loop+0.5])
-formatSpec = 'Forefoot vel optimization; time: %.4f';
+formatSpec = 'Forefoot, 8m/s; time: %.4f';
 title_handle = title(sprintf(formatSpec, 0.0));
 
 
@@ -161,7 +161,7 @@ for n=1:loop
     %delete(l9);
     %delete(l10);
 end
-  if save_video
+  if save_video && n==loop
       close(v);
       disp('Finished!')
   end

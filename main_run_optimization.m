@@ -3,7 +3,7 @@ close all;
 clc;
 clear;
 global v step T flags initialized tiptoe_upper_bound tiptoe_bound_init_guess
-global mode1N mode2N mode3N
+global mode1N mode2N mode3N mode4N
 
 if initialized == 1
 else
@@ -11,6 +11,7 @@ else
     mode1N = 10;
     mode2N = 14;
     mode3N = 1;
+    mode4N = 1;
     v = 8.0;  % desired velocity
     step = 1.5;
     tiptoe_upper_bound = 0.1;
@@ -23,7 +24,7 @@ end
   % step (approximate)
 period = step/v;
 T = period;
-tiptoe_duration_bound = [0,tiptoe_upper_bound];
+
 
 flags = Flags;
 flags.use_sea = true;
@@ -37,7 +38,13 @@ flags.optimize_vmode = 1;   %1/v become function instead of SR
 flags.check()
 % ↑ optimization setting ↑
 
+if ~flags.forefoot
+    tiptoe_upper_bound = 0;
+    tiptoe_bound_init_guess = 0;
+end
 
+tiptoe_duration_bound = [0.01*period,tiptoe_upper_bound];
+    
 ig = InitialGuess(step, false);
 %ig.draw();
 
@@ -59,21 +66,25 @@ mode2 = ocl.Stage( ...
   'N', mode2N, 'd', 3); % Airborne!!!
 
 %                        1end  
-period_bound = period*[0.3, 0.6, 0.8, 1.2];
+period_bound = period*[0.2, 0.5, 0.8, 1.2];
 if  flags.forefoot
     mode1.setInitialStateBounds('time', tiptoe_duration_bound(1), tiptoe_duration_bound(2));
+    mode1.setEndStateBounds('time', period_bound(1), period_bound(2)-tiptoe_duration_bound(2));
+    mode2.setInitialStateBounds('time', period_bound(1)+tiptoe_duration_bound(1), period_bound(2));
+    mode2.setEndStateBounds('time', period_bound(3), period_bound(4));
 else
     mode1.setInitialStateBounds('time', 0);
+    mode1.setEndStateBounds('time', period_bound(1), period_bound(2));
+    mode2.setInitialStateBounds('time', period_bound(1), period_bound(2));
+    mode2.setEndStateBounds('time', period_bound(3), period_bound(4));
 end
-mode1.setEndStateBounds('time', period_bound(1), period_bound(2));
-mode2.setInitialStateBounds('time', period_bound(1), period_bound(2));
-mode2.setEndStateBounds('time', period_bound(3), period_bound(4));
+
 
 %ig.set_initial_guess(mode3, mode1, mode2, period, tiptoe_bound_init_guess);
 
-load('aoyama_ver_result_2.mat', 'result');
-utils.copy_initial_guess_complete(mode1,1,result)
-utils.copy_initial_guess_complete(mode2,2,result)
+load('fast_result.mat', 'result');
+utils.copy_initial_guess_complete_v3(mode1,1,result)
+utils.copy_initial_guess_complete_v3(mode2,2,result)
 
 if flags.forefoot
   mode3 = ocl.Stage( ...
@@ -87,20 +98,20 @@ if flags.forefoot
    mode3.setInitialStateBounds('time', 0);
    mode3.setEndStateBounds('time', tiptoe_duration_bound(1), tiptoe_duration_bound(2));
    
-   utils.copy_initial_guess_complete(mode3,3,result)
+   utils.copy_initial_guess_complete_v3(mode3,3,result)
    
   mode4 = ocl.Stage( ...
   [], ...
   'vars', @optimizer.vars4, ...
   'dae', @optimizer.dae4, ...
   'pathcosts', @optimizer.pathcosts, ...
-  'gridconstraints', @optimizer.gridconstraints3, ...
-  'N', mode3N, 'd', 3); % Tiptoe Touchdown
+  'gridconstraints', @optimizer.gridconstraints4, ...
+  'N', mode4N, 'd', 3); % Tiptoe Touchdown
     
-   mode4.setInitialStateBounds('time', period_bound(1),period_bound(2));
-   mode4.setEndStateBounds('time', period_bound(1)+tiptoe_duration_bound(1), period_bound(2)+tiptoe_duration_bound(2));
+   mode4.setInitialStateBounds('time', period_bound(1), period_bound(2)-tiptoe_duration_bound(1));
+   mode4.setEndStateBounds('time', period_bound(1)+tiptoe_duration_bound(1), period_bound(2));
    
-   utils.copy_initial_guess_complete(mode4,4,result)
+   utils.copy_initial_guess_complete_v3(mode4,4,result)
 end
 
 if flags.forefoot
@@ -135,3 +146,4 @@ result = output.Result(sol, times, flags, sol_info);
     data_name = [datestr(exe_time,'yyyy-mm-dd_HH-MM-SS')];
     output.result_txt(result,data_name);
 %end
+diary off

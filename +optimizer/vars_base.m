@@ -103,10 +103,10 @@ function vars_base(vh)
 %   if flags.optimize_vmode 
     vh.addControl('u1','lb',-300,'ub',300);
     vh.addControl('u2','lb',-200,'ub',200);
-    vh.addControl('u3','lb', -10,'ub', 10);
+    vh.addControl('u3','lb', -100,'ub', 100);
     vh.addControl('u4','lb',-300,'ub',300);
     vh.addControl('u5','lb',-200,'ub',200);
-    vh.addControl('u6','lb', -10,'ub', 10);
+    vh.addControl('u6','lb', -100,'ub', 100);
     
 %     vh.addControl('u1','lb',-100,'ub',100); %TODO Original limit 300,200,100
 %     vh.addControl('u2','lb',-80,'ub',80);

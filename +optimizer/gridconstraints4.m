@@ -2,7 +2,7 @@
 
 function gridconstraints3(conh, k, K, x, p)
   tic;
-  global q0 phi0 dq0 dphi0 
+  global q0 phi0 dq0 dphi0 pdlw ppdlw
   global ppphi pphi
   global flags
 
@@ -15,15 +15,14 @@ function gridconstraints3(conh, k, K, x, p)
   %% 各関節が地面より上(y座標制約)
   conh.add(pj(1,2),'>=',0); % Supp Knee
   %conh.add(pj(2,2),'>=',0); % Supp ankle
-  if flags.forefoot
-      conh.add(pj(3,2),'==',0); % Supp Toe
-      if ~(k==1) 
-        conh.add(pj(4,2),'>=',1e-6); % Supp heel
-      end
-  else
-    conh.add(pj(3,2),'==',0); % Supp Toe
-    conh.add(pj(4,2),'==',0); % Supp heel
+  conh.add(pj(3,2),'==',0); % Supp Toe
+  if k == 1
+    conh.add(pj(4,2),'==',0);  % Supp heel
+  elseif ~(k==1) 
+    conh.add(pj(4,2),'>=',1e-6); % Supp heel
   end
+  
+  conh.add(dq(8),'>=',0);
   
   conh.add(pj(5,2),'>=',0); % Swng Knee
   %conh.add(pj(6,2),'>=',0); % Swng ankle
@@ -33,25 +32,17 @@ function gridconstraints3(conh, k, K, x, p)
   conh.add(dpj(6,1),'>=',0);
   
   %% 遊脚前進制約
-  if flags.forefoot
-    if k == 1
-        conh.add(dpj(2,2),'<=',0); %脚交換制約
-        conh.add(pj(4,2),'==',0);  % 支持脚かかと
-        % Impact condition is in transition function
-    elseif k == K
-        conh.add(pj(4,2),'>=',1e-6);  % 支持脚かかと
-    end
-  end
-    if k == 1
-      conh.add(dpj(6,2),'>=',0); %脚交換制約
-      q0 = q;
-      phi0 = phi;
-      dq0 = dq;
-      dphi0 = dphi;
-    end
+
  
+  conh.add(ppdlw-2*pdlw+dq(4),'<=',1) %滑らか制約
+  conh.add(ppdlw-2*pdlw+dq(4),'>=',-1)
+  ppdlw = pdlw;
+  pdlw = dq(4);
+    
+  
+  conh.add(ppphi-2*pphi+phi,'<=',2) %滑らか制約
+  conh.add(ppphi-2*pphi+phi,'>=',-2)
   ppphi = pphi;
   pphi = phi;
-    
   fprintf('gridconstraints3(k=%2d) complete : %.2f seconds\n',k,toc);
 end

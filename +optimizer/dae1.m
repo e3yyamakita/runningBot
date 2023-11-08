@@ -113,7 +113,6 @@ function dae1(daeh,x,z,u,p)
   %DAE4L = -xcom*sum(m)*g + z.zmp_x*z.fey;
   dL = I.'*ddth_abs + pcx.'*diag(m)*ddpcy - pcy.'*diag(m)*ddpcx;
   DAE3 = z.zmp_x - (sum(m)*g*xcom + dL)/(sum(m)*(ddycom + g));
-
   
   daeh.setAlgEquation(DAE1(1));
   daeh.setAlgEquation(DAE1(2));

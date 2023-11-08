@@ -2,7 +2,7 @@
 
 function gridconstraints2(conh, k, K, x, p)
 tic;
-global q0 phi0 dq0 dphi0
+global q0 phi0 dq0 dphi0 pdlw ppdlw
 global ppphi pphi v T
 global flags
 
@@ -50,8 +50,11 @@ if k == K
         reset_map2 = blkdiag(eye(3),reset_map1,reset_map1);
         reset_map = blkdiag(reset_map2,[1],reset_map2);
         T = x.time;
-        conh.add([q(2:end);phi;dq_after;dphi],'==',reset_map*[q0(2:end);phi0;dq0;dphi0]);
-        %conh.add(norm([q(2:end);phi;dq_after;dphi]-reset_map*[q0(2:end);phi0;dq0;dphi0]),'<=',1e-4);
+        %conh.add([q(2:end);phi;dq_after;dphi],'==',reset_map*[q0(2:end);phi0;dq0;dphi0]);
+        %conh.add([q(2:end);phi],'==',reset_map2*[q0(2:end);phi0]);
+        conh.add(norm([q(2:end);phi]-blkdiag(reset_map2*[q0(2:end);phi0])),'<=',1e-4);
+        conh.add(norm([dq_after;dphi]-blkdiag([1],reset_map2)*[dq0;dphi0]),'<=',1e-3);
+        %conh.add(norm([q(2:end);phi;dq_after;dphi]-reset_map*[q0(2:end);phi0;dq0;dphi0]),'<=',1e-2);
         % TODO check out if it needs change
     else
         conh.add(dpj(6,2),'<=',0); %脚交換制約
@@ -74,18 +77,21 @@ if k == K
         T = x.time;
         
         
-        conh.add([q(2:end);phi;dq_after;dphi],'==',reset_map*[q0(2:end);phi0;dq0;dphi0]);
+        %conh.add([q(2:end);phi;dq_after;dphi],'==',reset_map*[q0(2:end);phi0;dq0;dphi0]);
         
-        %conh.add(norm([q(2:end);phi;dq_after;dphi]-reset_map*[q0(2:end);phi0;dq0;dphi0]),'<=',1e-4);
-        
+        conh.add(norm([q(2:end);phi;dq_after;dphi]-reset_map*[q0(2:end);phi0;dq0;dphi0]),'<=',1e-4);
     end
 end
 
 %滑らか制約
-conh.add(ppphi-2*pphi+phi,'<=',2)
-conh.add(ppphi-2*pphi+phi,'>=',-2)
-ppphi = pphi;
-pphi = phi;
+  conh.add(ppdlw-2*pdlw+dq(4),'<=',1) %滑らか制約
+  conh.add(ppdlw-2*pdlw+dq(4),'>=',-1)
+  ppdlw = pdlw;
+  pdlw = dq(4);
 
+  conh.add(ppphi-2*pphi+phi,'<=',2) %滑らか制約
+  conh.add(ppphi-2*pphi+phi,'>=',-2)
+  ppphi = pphi;
+  pphi = phi;
 fprintf('gridconstraints2(k=%2d) complete : %.2f seconds\n',k,toc);
 end

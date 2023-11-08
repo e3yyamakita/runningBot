@@ -1,30 +1,30 @@
 function copy_initial_guess_complete(mode, mode_N, source)
-global flags tiptoe_bound_init_guess
+global flags tiptoe_bound_init_guess tiptoe_upper_bound mode1N mode2N mode3N mode4N
 
 % Completely copies all variables from the source as initial guess
 % THE SOURCE MUST HAVE THE SAME NUMBER OF STATES AND STEPS IN THE PHASE
+% for different sizes, try v2.
 
-
-if size(source.state_size) ~= 2
-    return;
-end
-
+if size(source.state_size,2) == 2
     if mode_N == 1
-        state_data_grid = [1:source.state_size(1)];
-        state_time_grid = normalize(source.time(state_data_grid),'range');
+       state_data_grid = [1:source.state_size(1)];
+       state_time_grid = normalize(source.time(state_data_grid),'range');
         
-        control_data_grid = [1:source.control_size(1)];
-        control_time_grid = normalize(source.control_time(control_data_grid),'range');
+       control_data_grid = [1:source.control_size(1)];
+       control_time_grid = normalize(source.control_time(control_data_grid),'range');
+
         
-        algvars_data_grid = [1:source.algvars_size(1)];
-        algvars_time_grid = normalize(source.algvars_time(algvars_data_grid),'range');
+       algvars_data_grid = [1:source.algvars_size(1)];
+       algvars_time_grid = normalize(source.algvars_time(algvars_data_grid),'range');
         
-        mode.initialize('time', state_time_grid,...
-            source.time(state_data_grid)+tiptoe_bound_init_guess*ones(size(state_time_grid)));
         
+       mode.initialize('time', state_time_grid,...
+           source.time(state_data_grid)+tiptoe_bound_init_guess*ones(size(state_time_grid)));
+
     elseif mode_N == 2
-        state_data_grid = [source.state_size(1)+1:source.state_size(1)+source.state_size(2)];
+        state_data_grid = [source.state_size(1)+1:sum(source.state_size(1:2))];
         state_time_grid = normalize(source.time(state_data_grid)-source.time(source.state_size(1)+1),'range');
+        
         
         control_data_grid = [source.control_size(1)+1:source.control_size(1)+source.control_size(2)];
         control_time_grid = normalize(source.control_time(control_data_grid)-source.control_time(source.control_size(1)+1),'range');
@@ -34,6 +34,7 @@ end
         
         mode.initialize('time', state_time_grid,...
             source.time(state_data_grid)+tiptoe_bound_init_guess*ones(size(state_time_grid)));
+
     elseif mode_N == 3
         
         state_data_grid = [1 1];
@@ -48,18 +49,72 @@ end
         mode.initialize('time', [0 1], [0 tiptoe_bound_init_guess]);
        
     elseif mode_N == 4
-        state_data_grid = [source.state_size(1) source.state_size(1)];
+        state_data_grid = [source.state_size(1) source.state_size(1)+1];
         state_time_grid = [0 1];
         
-        control_data_grid = [source.control_size(1) source.control_size(1)];
+        control_data_grid = [source.control_size(1) source.control_size(1)+1];
         control_time_grid = [0 1];
         
-        algvars_data_grid = [source.algvars_size(1) source.algvars_size(1)];
+        algvars_data_grid = [source.algvars_size(1) source.algvars_size(1)+1];
         algvars_time_grid = [0 1];
         
-        mode.initialize('time', [0 1], source.time(state_data_grid)+tiptoe_bound_init_guess*ones(size(state_time_grid)));
+        mode.initialize('time', [0 1], source.time(state_data_grid)+tiptoe_upper_bound*ones(size(state_time_grid)));
     end
+elseif  size(source.state_size,2) == 4
+    if mode_N == 1
+        
+        state_data_grid = [source.state_size(1)+1:sum(source.state_size(1:2))];
+        state_time_grid = normalize(source.time(state_data_grid)-source.time(state_data_grid(1)),'range');
+        
+        control_data_grid = [source.control_size(1)+1:sum(source.control_size(1:2))];
+        control_time_grid = normalize(source.control_time(control_data_grid)-source.control_time(control_data_grid(1)),'range');
+        
+        algvars_data_grid = [source.algvars_size(1)+1:sum(source.algvars_size(1:2))];
+        algvars_time_grid = normalize(source.algvars_time(algvars_data_grid)-source.algvars_time(algvars_data_grid(1)),'range');
+
+    elseif mode_N == 2
     
+        state_data_grid = [source.state_size(3)+1:sum(source.state_size(1:4))];
+        state_time_grid = normalize(source.time(state_data_grid)-source.time(state_data_grid(1)),'range');
+        
+        control_data_grid = [source.control_size(3)+1:sum(source.control_size(1:4))];
+        control_time_grid = normalize(source.control_time(control_data_grid)-source.control_time(control_data_grid(1)),'range'); 
+        
+        algvars_data_grid = [source.algvars_size(3)+1:sum(source.algvars_size(1:4))];
+        algvars_time_grid = normalize(source.algvars_time(algvars_data_grid)-source.algvars_time(algvars_data_grid(1)),'range');        
+
+    elseif mode_N == 3
+       
+        state_data_grid = [1:source.state_size(1)];
+        state_time_grid = normalize(source.time(state_data_grid),'range');
+        
+        control_data_grid = [1:source.control_size(1)];
+        control_time_grid = normalize(source.control_time(control_data_grid),'range');
+        
+        algvars_data_grid = [1:source.algvars_size(1)];
+        algvars_time_grid = normalize(source.algvars_time(algvars_data_grid),'range');
+    
+    elseif mode_N == 4
+        state_data_grid = [source.state_size(2)+1:sum(source.state_size(1:3))];
+        state_time_grid = normalize(source.time(state_data_grid)-source.time(state_data_grid(1)),'range');
+        
+        
+        control_data_grid = [source.control_size(2)+1:sum(source.control_size(1:3))];
+        control_time_grid = normalize(source.control_time(control_data_grid)-source.control_time(control_data_grid(1)),'range');
+        
+        algvars_data_grid = [source.algvars_size(2)+1:sum(source.algvars_size(1:3))];
+        algvars_time_grid = normalize(source.algvars_time(algvars_data_grid)-source.algvars_time(algvars_data_grid(1)),'range');
+    end
+   mode.initialize('time', state_time_grid,...
+           source.time(state_data_grid));
+else
+    disp("Dimension mismatch for intial guess")
+end
+
+if min(abs([diff(state_time_grid),diff(control_time_grid),diff(algvars_time_grid)])) == 0
+    disp("COPYING FAILED, DUPLICATED VALUES")
+end
+
         mode.initialize('xb'  , state_time_grid, source.xb(state_data_grid));
         mode.initialize('yb'  , state_time_grid, source.yb(state_data_grid)  );
         mode.initialize('thb' , state_time_grid, source.thb(state_data_grid) );
@@ -129,11 +184,12 @@ end
           mode.initialize('mw'    , [0 1],source.mw    *ones(1,2));
         end
 
-        if mode_N <= 2
+        if mode_N ~=2
           mode.initialize('fex', algvars_time_grid, source.fex(algvars_data_grid));
           mode.initialize('fey', algvars_time_grid, source.fey(algvars_data_grid));
         end
 
         if mode_N == 1
-          mode.initialize('zmp_x', algvars_time_grid, source.zmp_x(algvars_data_grid));
+          mode.initialize('zmp_x', [1:source.algvars_size(size(source.state_size,2)/2)], source.zmp_x);
+          mode.initialize('feth', algvars_time_grid, source.feth(algvars_data_grid));
         end

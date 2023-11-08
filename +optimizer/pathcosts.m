@@ -30,13 +30,15 @@ function pathcosts(ch, x, z, u, p)
   
   g = 9.80665;
   if flags.optimize_vmode
-    ch.add(1/(x.dxb));
+    ch.add(50/(x.dxb)/T);
   else
     if flags.use_sea
       ch.add(sum(abs(dphi.*U))/(M*g*v)/T);
+      ch.add(sum(abs(U.*U))/(M*g*v)/T);
       %ch.add(sum(U.*U)/(v)/T);
     else
       ch.add(sum(abs(dth.*U))/(M*g*v)/T);
+      ch.add(sum(abs(U.*U))/(M*g*v)/T);
       %ch.add(sum(U.*U)/(v)/T);
     end
   end
