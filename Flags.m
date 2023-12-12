@@ -2,16 +2,15 @@ classdef Flags
   properties
     use_sea;
     use_wobbling_mass;
-    use_inerter;
     optimize_k;
     optimize_mw;
-    forefoot;
-    bird_leg;
+    runtype;
     optimize_vmode;
+    use_ankle_sea;
   end
   methods
     function check(obj)
-      if (~obj.use_sea && obj.optimize_k)
+      if (~obj.use_sea && (obj.optimize_k ||  obj.use_ankle_sea ))
         error('SEA flag error');
       end
       if (~obj.use_wobbling_mass && obj.optimize_mw)

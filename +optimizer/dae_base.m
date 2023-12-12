@@ -18,10 +18,15 @@ function dae_base(daeh, x, z, u, p)
   daeh.setODE('th6'   , x.dth6  );
   daeh.setODE('phi1'  , x.dphi1 );
   daeh.setODE('phi2'  , x.dphi2 );
-  daeh.setODE('phi3'  , x.dphi3 );
   daeh.setODE('phi4'  , x.dphi4 );
   daeh.setODE('phi5'  , x.dphi5 );
-  daeh.setODE('phi6'  , x.dphi6 );
+  if flags.use_ankle_sea
+    daeh.setODE('phi3'  , x.dphi3 );
+    daeh.setODE('phi6'  , x.dphi6 );
+  else
+    daeh.setODE('phi3'  , 0 );
+    daeh.setODE('phi6'  , 0 );      
+  end
   daeh.setODE('dxb'   , z.ddxb  );
   daeh.setODE('dyb'   , z.ddyb  );
   daeh.setODE('dthb'  , z.ddthb );
@@ -38,24 +43,25 @@ function dae_base(daeh, x, z, u, p)
   daeh.setODE('dth6'  , z.ddth6 );
   daeh.setODE('dphi1' , z.ddphi1);
   daeh.setODE('dphi2' , z.ddphi2);
-  daeh.setODE('dphi3' , z.ddphi3);
   daeh.setODE('dphi4' , z.ddphi4);
   daeh.setODE('dphi5' , z.ddphi5);
-  daeh.setODE('dphi6' , z.ddphi6);
-  daeh.setODE('time'  , 1       );
-  if flags.optimize_k
-    daeh.setODE('khip'  , 0);
-    daeh.setODE('kknee' , 0);
-    daeh.setODE('kankle', 0);
+  if flags.use_ankle_sea
+    daeh.setODE('dphi3'  , z.ddphi3 );
+    daeh.setODE('dphi6'  , z.ddphi6 );
+  else
+    daeh.setODE('dphi3'  , 0 );
+    daeh.setODE('dphi6'  , 0 );      
   end
+  
+  daeh.setODE('time'  , 1       );
+  
+  if flags.optimize_k
+    daeh.setODE('springK'  , [0;0;0]);
+  end
+  
   if flags.optimize_mw
     daeh.setODE('mw'    , 0);
   end
-
-  if flags.use_inerter
-    daeh.setODE('beta_ankle' ,0);
-    daeh.setODE('beta_knee', 0);
-  end
-
-
+  
+  daeh.setODE('period', 0);
 end

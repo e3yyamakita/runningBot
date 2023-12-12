@@ -1,6 +1,10 @@
 function zmp(result)
 
-t = result.algvars_time(1:result.algvars_size(1));
+if result.flags.runtype == 0
+    t = result.algvars_time(1:result.algvars_size(1));
+else
+    t = result.algvars_time(result.algvars_size(1)+1:sum(result.algvars_size([1,2])));
+end
 figure;
 title("zmp");
 plot(t, result.zmp_x);

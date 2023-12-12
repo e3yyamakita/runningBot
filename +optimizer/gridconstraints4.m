@@ -10,7 +10,7 @@ function gridconstraints3(conh, k, K, x, p)
   [q, dq, phi, dphi] = utils.decompose_state(x);
   pj = SEA_model.pj(params,x);
   dpj = SEA_model.dpj(params,x);
-  optimizer.gridconstraints_base(conh, q, phi, pj, dpj, x);
+  optimizer.gridconstraints_base(conh, q, phi, pj, dpj, x, p);
 
   %% 各関節が地面より上(y座標制約)
   conh.add(pj(1,2),'>=',0); % Supp Knee
@@ -19,7 +19,7 @@ function gridconstraints3(conh, k, K, x, p)
   if k == 1
     conh.add(pj(4,2),'==',0);  % Supp heel
   elseif ~(k==1) 
-    conh.add(pj(4,2),'>=',1e-6); % Supp heel
+    conh.add(pj(4,2),'>=',0); % Supp heel
   end
   
   conh.add(dq(8),'>=',0);
@@ -33,16 +33,24 @@ function gridconstraints3(conh, k, K, x, p)
   
   %% 遊脚前進制約
 
- 
-  conh.add(ppdlw-2*pdlw+dq(4),'<=',1) %滑らか制約
-  conh.add(ppdlw-2*pdlw+dq(4),'>=',-1)
+  conh.add(ppdlw-2*pdlw+dq(4),'<=',2) %滑らか制約
+  conh.add(ppdlw-2*pdlw+dq(4),'>=',-2)
   ppdlw = pdlw;
   pdlw = dq(4);
     
   
-  conh.add(ppphi-2*pphi+phi,'<=',2) %滑らか制約
-  conh.add(ppphi-2*pphi+phi,'>=',-2)
+  if flags.use_ankle_sea  
+      conh.add(ppphi-2*pphi+phi,'<=',2) %滑らか制約
+      conh.add(ppphi-2*pphi+phi,'>=',-2)
+  else
+      conh.add(ppphi-2*pphi+phi([1,2,4,5]),'<=',2) %滑らか制約
+      conh.add(ppphi-2*pphi+phi([1,2,4,5]),'>=',-2)    
+  end
   ppphi = pphi;
-  pphi = phi;
-  fprintf('gridconstraints3(k=%2d) complete : %.2f seconds\n',k,toc);
+  if flags.use_ankle_sea
+    pphi = phi;
+  else
+    pphi = phi([1,2,4,5]);
+  end
+  fprintf('gridconstraints4(k=%2d) complete : %.2f seconds\n',k,toc);
 end

@@ -1,6 +1,6 @@
 function vars_base(vh)
 
-  global step flags
+  global step flags v
   % State x
   vh.addState('xb');
   vh.addState('yb',  'lb',     0);
@@ -11,21 +11,13 @@ function vars_base(vh)
     vh.addState('lw',  'lb',     1/2*params.l7,'ub',1/2*params.l7); % 揺動質量
   end
 
-  if flags.bird_leg
-    vh.addState('th1', 'lb',  3/4*pi,'ub',       3/2*pi);
-    vh.addState('th2', 'lb',    pi/4,'ub',       3/4*pi); % 膝角度
-    vh.addState('th3', 'lb',       0,'ub',       3/4*pi); % 足首角度 
-    vh.addState('th4', 'lb',  3/4*pi,'ub',       3/2*pi);
-    vh.addState('th5', 'lb',    pi/4,'ub',       3/4*pi); % 膝角度
-    vh.addState('th6', 'lb',       0,'ub',       3/4*pi); % 足首角度
-  else
     vh.addState('th1', 'lb',  pi,'ub',     7/4*pi);
     vh.addState('th2', 'lb', -3/4*pi,'ub',            0); % 膝角度
     vh.addState('th3', 'lb',  pi/4,'ub',       3/4*pi); % 足首角度 
     vh.addState('th4', 'lb',  pi,'ub',     7/4*pi);
     vh.addState('th5', 'lb', -3/4*pi,'ub',          0); % 膝角度
     vh.addState('th6', 'lb',  pi/4,'ub',       3/4*pi); % 足首角度
-  end
+
 
   if flags.use_sea
     vh.addState('phi1');
@@ -67,17 +59,13 @@ function vars_base(vh)
   vh.addState('time'  ,'lb',0);
   % params
   if flags.optimize_k
-    vh.addState('khip'  ,'lb',0, 'ub',1200);    %TODO return to ori 1200
-    vh.addState('kknee' ,'lb',0, 'ub',2000);
-    vh.addState('kankle','lb',0, 'ub',2000);
-    %vh.addState('bankle','lb',0);
+%     vh.addState('khip'  ,'lb',0, 'ub',1200);    %TODO return to ori 1200
+%     vh.addState('kknee' ,'lb',0, 'ub',2000);
+%     vh.addState('kankle','lb',0, 'ub',2000);
+    vh.addState('springK','s', [3 1],'lb',[0;0;0], 'ub',[4000;4000;4000]);
   end
   if flags.optimize_mw
-    vh.addState('mw'    ,'lb', 0.1, 'ub', 0.2);
-  end
-  if flags.use_inerter
-    vh.addState('beta_ankle' ,'lb',0,'ub', 0.5);
-    vh.addState('beta_knee','lb',0,'ub', 0.5);
+    vh.addState('mw'    ,'lb', 0.02, 'ub', 1.5);
   end
 
   %  Algebraic Variable z
@@ -101,12 +89,12 @@ function vars_base(vh)
 
   % Control u
 %   if flags.optimize_vmode 
-    vh.addControl('u1','lb',-300,'ub',300);
-    vh.addControl('u2','lb',-200,'ub',200);
-    vh.addControl('u3','lb', -100,'ub', 100);
-    vh.addControl('u4','lb',-300,'ub',300);
-    vh.addControl('u5','lb',-200,'ub',200);
-    vh.addControl('u6','lb', -100,'ub', 100);
+    vh.addControl('u1','lb',-500,'ub',500);
+    vh.addControl('u2','lb',-500,'ub',500);
+    vh.addControl('u3','lb',-500,'ub',500);
+    vh.addControl('u4','lb',-500,'ub',500);
+    vh.addControl('u5','lb',-500,'ub',500);
+    vh.addControl('u6','lb',-500,'ub',500);
     
 %     vh.addControl('u1','lb',-100,'ub',100); %TODO Original limit 300,200,100
 %     vh.addControl('u2','lb',-80,'ub',80);
@@ -131,11 +119,12 @@ function vars_base(vh)
 %   end
   
   if flags.use_wobbling_mass
-    vh.addControl('uw','lb',-10,'ub',10);
+    vh.addControl('uw','lb',-100,'ub',100);
   else
     vh.addControl('uw','lb',0,'ub',0);
   end
   % Parameter p
   vh.addParameter('p3', 'default', step);
 
+  vh.addState('period','lb',0.5*step/v,'ub',1.5*step/v);
 end

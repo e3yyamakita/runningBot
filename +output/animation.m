@@ -17,7 +17,7 @@ hold on
 axis equal
 ylim([-0.2 1.8])
 xlim([-0.8 result.step*loop+0.5])
-formatSpec = 'Forefoot, 8m/s; time: %.4f';
+formatSpec = 'NonForefoot, vel opt; time: %.4f';
 title_handle = title(sprintf(formatSpec, 0.0));
 
 
@@ -108,14 +108,14 @@ for n=1:loop
         k = k + 1;
       end
       % 現在時刻がresult.algvars_time(k2)を上回ったらk2をインクリメント
-      if result.flags.forefoot
-          while(t>=result.algvars_time(k2) && k2 < result.algvars_size(1)+result.algvars_size(2)+result.algvars_size(3))
-            k2 = k2 + 1;
-          end
-      else
+      if result.flags.runtype == 0
         while(t>=result.algvars_time(k2) && k2 < result.algvars_size(1))
             k2 = k2 + 1;
         end
+      else
+          while(t>=result.algvars_time(k2) && k2 < result.algvars_size(1)+result.algvars_size(2)+result.algvars_size(3))
+            k2 = k2 + 1;
+          end
       end
       tic;
       hold on;

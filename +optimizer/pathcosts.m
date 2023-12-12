@@ -3,13 +3,13 @@ function pathcosts(ch, x, z, u, p)
   tic;
   global v T flags
 
-  if flags.use_sea
+  if flags.use_ankle_sea
     dphi = [x.dphi1;x.dphi2;x.dphi3;x.dphi4;x.dphi5;x.dphi6];
     if flags.use_wobbling_mass
         dphi = [dphi;x.dlw];
     end
   else
-    dth = [x.dth1;x.dth2;x.dth3;x.dth4;x.dth5;x.dth6;x.dlw];
+    dth = [x.dphi1;x.dphi2;x.dth3;x.dphi4;x.dphi5;x.dth6];
     if flags.use_wobbling_mass
         dth = [dth;x.dlw];
     end
@@ -30,17 +30,9 @@ function pathcosts(ch, x, z, u, p)
   
   g = 9.80665;
   if flags.optimize_vmode
-    ch.add(50/(x.dxb)/T);
+    ch.add(100/(x.dxb)/x.period);
   else
-    if flags.use_sea
-      ch.add(sum(abs(dphi.*U))/(M*g*v)/T);
-      ch.add(sum(abs(U.*U))/(M*g*v)/T);
-      %ch.add(sum(U.*U)/(v)/T);
-    else
-      ch.add(sum(abs(dth.*U))/(M*g*v)/T);
-      ch.add(sum(abs(U.*U))/(M*g*v)/T);
-      %ch.add(sum(U.*U)/(v)/T);
-    end
+    ch.add(sum(abs(dth.*U))/(M*g*v)/x.period);
   end
   
   fprintf('pathcosts             complete : %.2f seconds\n',toc);

@@ -83,6 +83,8 @@ classdef Result
     objective_v
     sr
     solve_time
+    imp_foot
+    imp_land
   end
   methods
     function obj = Result(sol, times, flags, sol_info)
@@ -152,13 +154,17 @@ classdef Result
         obj.uw = [obj.uw, sol{i}.controls.uw.value];
         obj.fex = [obj.fex, sol{i}.integrator.algvars.fex.value];
         obj.fey = [obj.fey, sol{i}.integrator.algvars.fey.value];
+        
         obj.feth = [obj.feth, sol{i}.integrator.algvars.feth.value];
-
+        
       end
-      if obj.flags.forefoot
-        obj.zmp_x = [sol{2}.integrator.algvars.zmp_x.value];
-      else
+      obj.imp_foot = zeros(3,0);
+      obj.imp_land = zeros(2,0);
+      obj.fex = obj.fex.*obj.fey;
+      if obj.flags.runtype == 0
         obj.zmp_x = [sol{1}.integrator.algvars.zmp_x.value];
+      else
+        obj.zmp_x = [sol{2}.integrator.algvars.zmp_x.value];
       end
       
       for i=1:length(sol)
@@ -177,18 +183,18 @@ classdef Result
       end
       
       if obj.flags.optimize_k
-        khips = sol{1}.states.khip.value; obj.khip = khips(1);
-        kknees = sol{1}.states.kknee.value; obj.kknee = kknees(1);
-        kankles = sol{1}.states.kankle.value; obj.kankle = kankles(1);
+%         khips = sol{1}.states.khip.value; obj.khip = khips(1);
+%         kknees = sol{1}.states.kknee.value; obj.kknee = kknees(1);
+%         kankles = sol{1}.states.kankle.value; obj.kankle = kankles(1);
+        springK = sol{1}.states.springK.value;
+        obj.khip = springK(1); 
+        obj.kknee = springK(2);
+        obj.kankle = springK(3);
       end
       if obj.flags.optimize_mw
-        mws = sol{1}.states.mw.value; obj.mw = mws(1);
-      end
-
-      if obj.flags.use_inerter
-          %beta = sol{1}.states.beta.value; obj.beta = beta(1);
-          beta_ankle = sol{1}.states.beta_ankle.value; obj.beta_ankle = beta_ankle(1);
-          beta_knee = sol{1}.states.beta_knee.value; obj.beta_knee = beta_knee(1);
+%         mws = sol{1}.states.mw.value; obj.mw = mws(1);
+        mw = sol{1}.states.mw.value;
+        obj.mw = mw(1);
       end
 
       obj.period = obj.time(end);
@@ -204,7 +210,42 @@ classdef Result
       end
 
       obj.solve_time = sol_info.timeMeasures.solveTotal;
+      
+      if obj.flags.runtype == 0
+            size = sol{2}.states.size;
+            x0 = sol{2}.states{size(2)};
+            p0 = sol{2}.parameters{1};
+            M = SEA_model.M(params,x0,p0);
+            Jc1 = SEA_model.Jc1(params,x0);
+            [~, dq, ~, ~] = utils.decompose_state(x0);
+            dq_after_lambda = inv([M,-Jc1.'; Jc1,zeros(3,3)])*[M*dq; zeros(3,1)];
+            obj.imp_foot = dq_after_lambda(11:13).value;
+      elseif obj.flags.runtype > 0          
+            size = sol{1}.states.size;
+            x0 = sol{1}.states{size(2)};
+            p0 = sol{1}.parameters{1};
+            M = SEA_model.M(params,x0,p0);
+            Jc1 = SEA_model.Jc1(params,x0);
+            [~, dq, ~, ~] = utils.decompose_state(x0);
+            dq_after_lambda = inv([M,-Jc1.'; Jc1,zeros(3,3)])*[M*dq; zeros(3,1)];
+            obj.imp_foot = dq_after_lambda(11:13).value;
 
+            size = sol{4}.states.size;
+            x0 = sol{4}.states{size(2)};
+            M = SEA_model.M(params,x0,p0);
+            if obj.flags.runtype == 1
+                Jtoe2 = SEA_model.Jtoe2(params,x0);
+                [~, dq, ~, ~] = utils.decompose_state(x0);
+                dq_after_lambda = inv([M,-Jtoe2.'; Jtoe2,zeros(2,2)])*[M*dq; zeros(2,1)];
+            elseif obj.flags.runtype == 2
+                Jheel2 = SEA_model.Jheel2(params,x0);
+                [~, dq, ~, ~] = utils.decompose_state(x0);
+                dq_after_lambda = inv([M,-Jheel2.'; Jheel2,zeros(2,2)])*[M*dq; zeros(2,1)];
+            end
+            obj.imp_land = dq_after_lambda(11:12).value;
+      end
+      
+      
       % ダブり要素の削除
 %       del_pos = zeros(1,length(sol));
 %       for i = 1:length(del_pos)
@@ -351,8 +392,10 @@ classdef Result
         %color = {'r', 'b'};
         utils.back_coloring(section(1:2), color{1});
         utils.back_coloring(section(2:3), color{2});
-        utils.back_coloring(section(3:4), color{1});
-        utils.back_coloring([section(4), inf], color{2});
+        if obj.flags.runtype > 0
+            utils.back_coloring(section(3:4), color{1});
+            utils.back_coloring([section(4), inf], color{2});
+        end
     end
   end
   

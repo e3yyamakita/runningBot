@@ -1,4 +1,4 @@
-function dae3(daeh,x,z,u,p)
+function dae4(daeh,x,z,u,p)
   tic;
   
   global flags
@@ -14,57 +14,21 @@ function dae3(daeh,x,z,u,p)
 
   if flags.optimize_k
     % spring sttifness of SEA
-    K = diag(repmat([x.khip x.kknee x.kankle],1,2));
+    %K = diag(repmat([x.khip x.kknee x.kankle],1,2));
+    K = diag(repmat([x.springK(1) x.springK(2) x.springK(3)],1,2));
     % inertia of SEA
     B = diag(repmat([params.bhip params.bknee params.bankle],1,2));
   else
     K = diag(repmat([params.khip params.kknee params.kankle],1,2));
     B = diag(repmat([params.bhip params.bknee params.bankle],1,2));
   end
-  if flags.use_inerter
-    % bm = Inerter_model.bm(0,x.beta,x.beta,0,x.beta,x.beta);
-    beta_ankle = x.beta_ankle;
-    beta_knee = x.beta_knee;
-   bm = [0,0,0,0,0,        0,         0,          0,        0,          0;
-         0,0,0,0,0,        0,         0,          0,        0,          0;
-         0,0,0,0,0,        0,         0,          0,        0,          0;
-         0,0,0,0,0,        0,         0,          0,        0,          0;
-         0,0,0,0,0,        0,         0,          0,        0,          0;
-         0,0,0,0,0,beta_knee,         0,          0,        0,          0;
-         0,0,0,0,0,        0,beta_ankle,          0,        0,          0;
-         0,0,0,0,0,        0,         0,          0,        0,          0;
-         0,0,0,0,0,        0,         0,          0,beta_knee,          0;
-         0,0,0,0,0,        0,         0,          0,        0, beta_ankle];
-
-   % bm = [0,0,0,0,0,        0,         0,          0,        0,           0;
-   %       0,0,0,0,0,        0,         0,          0,        0,           0;
-   %       0,0,0,0,0,        0,         0,          0,        0,           0;
-   %       0,0,0,0,0,        0,         0,          0,        0,           0;
-   %       0,0,0,0,0,beta_knee,         0,          0,        0,           0;
-   %       0,0,0,0,0,-beta_knee,  beta_ankle,          0,        0,          0;
-   %       0,0,0,0,0,        0, -beta_ankle,          0,        0,          0;
-   %       0,0,0,0,0,        0,         0,          0,beta_knee,            0;
-   %       0,0,0,0,0,        0,         0,          0, -beta_knee,   beta_ankle;
-   %       0,0,0,0,0,        0,         0,          0,        0,   -beta_ankle];
-   
-   % bm = [0,0,0,0,0,0,0    ,0,0,0;
-   %      0,0,0,0,0,0,0    ,0,0,0;
-   %      0,0,0,0,0,0,0    ,0,0,0;
-   %      0,0,0,0,0,0,0    ,0,0,0;
-   %      0,0,0,0,0,0,0    ,0,0,0;
-   %      0,0,0,0,0,0,beta ,0,0,0;
-   %      0,0,0,0,0,0,-beta,0,0,0;
-   %      0,0,0,0,0,0,0    ,0,0,0;
-   %      0,0,0,0,0,0,0    ,0,0,beta;
-   %      0,0,0,0,0,0,0    ,0,0,-beta];
-  end
   
   S = params.S;
   % wobbling mass
   uw = u.uw;
 
-  M = SEA_model.M(params,x);
-  h = SEA_model.h(params,x,z);
+  M = SEA_model.M(params,x,p);
+  h = SEA_model.h(params,x,z,p);
 
   if flags.optimize_mw
     m = [params.m1;params.m2;params.m3;params.m4;params.m5;params.m6;params.m7;x.mw];
@@ -87,8 +51,8 @@ function dae3(daeh,x,z,u,p)
   ddpw = SEA_model.ddpw(params,x,z);
   ddpcx = [ddpc(:,1); ddpw(1)];
   ddpcy = [ddpc(:,2); ddpw(2)];
-  pcom = SEA_model.pcom(params,x,z);
-  ddpcom = SEA_model.ddpcom(params,x,z);
+  pcom = SEA_model.pcom(params,x,z,p);
+  ddpcom = SEA_model.ddpcom(params,x,z,p);
   xcom = pcom(1); ycom = pcom(2);
   ddxcom = ddpcom(1); ddycom = ddpcom(2);
   Jtoe = SEA_model.Jtoe(params,x,z);
@@ -98,38 +62,24 @@ function dae3(daeh,x,z,u,p)
   dJc1 = SEA_model.dJc1(params,x);
   
   
-  if flags.use_sea
+  if flags.use_ankle_sea
     tau = K*(phi-q(5:10,:));
   else 
-    tau = U;
+    tau = K*(phi-q(5:10,:));
+    tau(3) = U(3);
+    tau(6) = U(6);
   end
   tau2 = [uw;tau];
-  if flags.forefoot
-      fe = [z.fex; z.fey];
-      if flags.use_inerter
-        DAE1 = [M+bm,-Jtoe.'; Jtoe,zeros(2,2)]*[ddq;fe] - [S*tau2-h; -dJtoe*dq];
-      else  
-        DAE1 = [M,-Jtoe.'; Jtoe,zeros(2,2)]*[ddq;fe] - [S*tau2-h; -dJtoe*dq];
-      end
-  else
-      Jzmp = SEA_model.Jzmp(params,x,z);
-      dJzmp = SEA_model.dJzmp(params,x,z);      
-      fe = [z.fex; z.fey; z.feth];
-      if flags.use_inerter
-        DAE1 = [M+bm,-Jzmp.'; Jzmp,zeros(3,3)]*[ddq;fe] - [S*tau2-h; -dJzmp*dq];
-      else  
-        DAE1 = [M,-Jzmp.'; Jzmp,zeros(3,3)]*[ddq;fe] - [S*tau2-h; -dJzmp*dq];
-      end
-  end
+  
+
+  fe = [z.fex*z.fey; z.fey]; 
+  DAE1 = [M,-Jtoe.'; Jtoe,zeros(2,2)]*[ddq;fe] - [S*tau2-h; -dJtoe*dq];
   DAE2 = B*ddphi - (U-tau);
-  %DAE3 = sum(m)*[ddxcom; ddycom] - (-[0; sum(m)*g] + fe);
-  %DAE4L = -xcom*sum(m)*g + z.zmp_x*z.fey;
-  if flags.forefoot
-    DAE3 = [z.feth];
-  else
-    dL = I.'*ddth_abs + pcx.'*diag(m)*ddpcy - pcy.'*diag(m)*ddpcx;
-    DAE3 = z.zmp_x - (sum(m)*g*xcom + dL)/(sum(m)*(ddycom + g));
+  if ~flags.use_ankle_sea
+      DAE2(3) = ddphi(3);
+      DAE2(6) = ddphi(6);
   end
+  DAE3 = [z.feth];
   
   daeh.setAlgEquation(DAE1(1));
   daeh.setAlgEquation(DAE1(2));
@@ -152,14 +102,9 @@ function dae3(daeh,x,z,u,p)
   daeh.setAlgEquation(DAE2(4));
   daeh.setAlgEquation(DAE2(5));
   daeh.setAlgEquation(DAE2(6));
-  %daeh.setAlgEquation(DAE3(1));
-  %daeh.setAlgEquation(DAE3(2));
+  daeh.setAlgEquation(DAE3(1));
   daeh.setAlgEquation(DAE1(11));
   daeh.setAlgEquation(DAE1(12));
-  daeh.setAlgEquation(DAE3(1));
   
-  if ~flags.forefoot
-      daeh.setAlgEquation(DAE1(13));
-  end
   fprintf('dae4                   complete : %.2f seconds\n',toc);
 end

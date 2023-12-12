@@ -6,18 +6,8 @@ function vars3(vh)
   % 共通部分
   optimizer.vars_base(vh);
   
-  % ZMP
-  % if flags.use_inerter
-  %   vh.addAlgVar('zmp_x','lb', params.l3-params.a3, 'ub', params.l3-params.a3);
-  % else
-  if flags.forefoot
-      vh.addAlgVar('feth', 'lb', 0, 'ub', 0);
-  else
-      vh.addAlgVar('zmp_x','lb', -params.a3, 'ub', params.l3-params.a3);
-      vh.addAlgVar('feth');
-  end
-  %end
-  vh.addAlgVar('fex');
+  vh.addAlgVar('feth', 'lb', 0, 'ub', 0);
+  vh.addAlgVar('fex', 'lb', -1, 'ub', 1);
   vh.addAlgVar('fey', 'lb', 0);
   
   

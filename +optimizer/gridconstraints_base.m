@@ -1,20 +1,19 @@
 %% 立脚期と浮遊期共通のgridconstraints
 % 各関節角の制限,角速度の制限はvarsに記述
 
-function gridconstraints_base(conh, q, phi, pj, dpj, x)
+function gridconstraints_base(conh, q, phi, pj, dpj, x, p)
 
-  global flags
+  global flags step v
   
-  if flags.use_sea
+  if flags.use_ankle_sea
     % thetaとphiが離れすぎない(バネの伸びに関する制約)
     conh.add(q(5:10)-phi,'>=',-pi*ones(6,1));
     conh.add(q(5:10)-phi,'<=',pi*ones(6,1));
+  else
+    conh.add(q([5,6,8,9])-phi([1,2,4,5]),'>=',-pi*ones(4,1));
+    conh.add(q([5,6,8,9])-phi([1,2,4,5]),'<=',pi*ones(4,1));
   end
   
-  if flags.optimize_k
-    conh.add(x.khip,'<=',x.kknee);
-    conh.add(x.kankle,'<=',x.kknee);
-  end
   % 前進制約
   conh.add(dpj(6,1),'>=',0);
   conh.add(x.dxb, '>=', 0);

@@ -6,7 +6,6 @@ function dae2(daeh,x,z,u,p)
   % 共通部分
   optimizer.dae_base(daeh, x, z, u, p);
   
-  
   [q, ~, phi, ~] = utils.decompose_state(x);
   
   [ddq, ddphi] = utils.decompose_algvars(z);
@@ -15,7 +14,8 @@ function dae2(daeh,x,z,u,p)
   
   if flags.optimize_k
     % spring sttifness of SEA
-    K = diag(repmat([x.khip x.kknee x.kankle],1,2));
+    %K = diag(repmat([x.khip x.kknee x.kankle],1,2));
+    K = diag(repmat([x.springK(1) x.springK(2) x.springK(3)],1,2));
     % inertia of SEA
     B = diag(repmat([params.bhip params.bknee params.bankle],1,2));
   else
@@ -27,46 +27,24 @@ function dae2(daeh,x,z,u,p)
   % wobbling mass
   uw = u.uw;
 
-  M = SEA_model.M(params,x);
-  h = SEA_model.h(params,x,z);
-  if flags.use_inerter
-    % bm = Inerter_model.bm(0,x.beta,x.beta,0,x.beta,x.beta);
-    beta_ankle = x.beta_ankle;
-    beta_knee = x.beta_knee;
-   bm = [0,0,0,0,0,        0,         0,          0,        0,          0;
-         0,0,0,0,0,        0,         0,          0,        0,          0;
-         0,0,0,0,0,        0,         0,          0,        0,          0;
-         0,0,0,0,0,        0,         0,          0,        0,          0;
-         0,0,0,0,0,        0,         0,          0,        0,          0;
-         0,0,0,0,0,beta_knee,         0,          0,        0,          0;
-         0,0,0,0,0,        0,beta_ankle,          0,        0,          0;
-         0,0,0,0,0,        0,         0,          0,        0,          0;
-         0,0,0,0,0,        0,         0,          0,beta_knee,          0;
-         0,0,0,0,0,        0,         0,          0,        0, beta_ankle];
-    % bm = [0,0,0,0,0,        0,         0,          0,        0,           0;
-    %      0,0,0,0,0,        0,         0,          0,        0,           0;
-    %      0,0,0,0,0,        0,         0,          0,        0,           0;
-    %      0,0,0,0,0,        0,         0,          0,        0,           0;
-    %      0,0,0,0,0,beta_knee,         0,          0,        0,           0;
-    %      0,0,0,0,0,-beta_knee,  beta_ankle,          0,        0,          0;
-    %      0,0,0,0,0,        0, -beta_ankle,          0,        0,          0;
-    %      0,0,0,0,0,        0,         0,          0,  beta_knee,            0;
-    %      0,0,0,0,0,        0,         0,          0, -beta_knee,   beta_ankle;
-    %      0,0,0,0,0,        0,         0,          0,        0,   -beta_ankle];
-  end
+  M = SEA_model.M(params,x,p);
+  h = SEA_model.h(params,x,z,p);
 
-  if flags.use_sea
+  if flags.use_ankle_sea
     tau = K*(phi-q(5:10,:));
-  else
-    tau = U;
+  else 
+    tau = K*(phi-q(5:10,:));
+    tau(3) = U(3);
+    tau(6) = U(6);
   end
+  
   tau2 = [uw;tau];
-  if flags.use_inerter
-    DAE1 = (M+bm)*ddq -(S*tau2-h);
-  else
-    DAE1 = M*ddq -(S*tau2-h);
-  end
+  DAE1 = M*ddq -(S*tau2-h);
   DAE2 = B*ddphi - (U-tau);
+  if ~flags.use_ankle_sea
+      DAE2(3) = ddphi(3);
+      DAE2(6) = ddphi(6);
+  end
   DAE3 = [z.fex; z.fey; z.feth];
   
   daeh.setAlgEquation(DAE1(1));

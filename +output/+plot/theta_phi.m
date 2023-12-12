@@ -18,17 +18,26 @@ result.separate_background_with_section('state');
 subplot(2,1,2);
 hold on
 title('phi');
-phi = [result.phi1; result.phi2; result.phi3; result.phi4; result.phi5; result.phi6];
-for i=1:6
-  plot(result.time, phi(i,:));
+if result.flags.use_ankle_sea
+    phi = [result.phi1; result.phi2; result.phi3; result.phi4; result.phi5; result.phi6];
+    for i=1:6
+      plot(result.time, phi(i,:));
+    end
+    legend('phi1','phi2','phi3','phi4','phi5','phi6');
+else
+    phi = [result.phi1; result.phi2; result.phi4; result.phi5];
+    for i=1:4
+      plot(result.time, phi(i,:));
+    end
+    legend('phi1','phi2', 'phi4','phi5');
 end
-legend('phi1','phi2','phi3','phi4','phi5','phi6');
 xlabel('time');
 result.separate_background_with_section('state');
 
 figure;
-for i=1:6
-  subplot(3,2,i);
+
+for i=1:size(phi,1)
+  subplot(size(phi,1)/2,2,i);
   plot(result.time, th(i,:));
   hold on
   plot(result.time, phi(i,:));
@@ -57,18 +66,26 @@ result.separate_background_with_section('state');
 subplot(2,1,2);
 hold on
 title('dphi');
-dphi = [result.dphi1; result.dphi2; result.dphi3; result.dphi4; result.dphi5; result.dphi6];
-for i=1:6
-  plot(result.time, dphi(i,:));
+if result.flags.use_ankle_sea
+    dphi = [result.dphi1; result.dphi2; result.dphi3; result.dphi4; result.dphi5; result.dphi6];
+    for i=1:6
+      plot(result.time, dphi(i,:));
+    end
+    legend('dphi1','dphi2','dphi3','dphi4','dphi5','dphi6');
+else
+    dphi = [result.dphi1; result.dphi2; result.dphi4; result.dphi5];
+    for i=1:4
+      plot(result.time, dphi(i,:));
+    end
+    legend('dphi1','dphi2','dphi4','dphi5');
 end
-legend('dphi1','dphi2','dphi3','dphi4','dphi5','dphi6');
 xlabel('time');
 result.separate_background_with_section('state');
 
 
 figure;
-for i=1:6
-  subplot(3,2,i);
+for i=1:size(dphi,1)
+  subplot(size(dphi,1)/2,2,i);
   plot(result.time, dth(i,:));
   hold on
   plot(result.time, dphi(i,:));

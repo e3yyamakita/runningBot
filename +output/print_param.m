@@ -8,10 +8,6 @@ if result.flags.optimize_k
   fprintf('k_knee  = %f\n',result.kknee);
   fprintf('k_ankle = %f\n',result.kankle);
 end
-if result.flags.use_inerter
-  fprintf('beta_knee   = %f\n',result.beta_knee);
-  fprintf('beta_ankle  = %f\n',result.beta_ankle);
-end
 
 fprintf('step = %f\n', result.step);
 fprintf('v = %f\n', result.v);
