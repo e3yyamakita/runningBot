@@ -232,23 +232,25 @@ end
         mode.initialize('u6' , control_time_grid, source.u6(control_data_grid) );
         %mode.initialize('uw' , control_time_grid, source.uw(control_data_grid) );
         mode.initialize('uw' , control_time_grid, ((4*pi^2/T^2)*sin(2*pi*source.algvars_time(control_data_grid)/T)/params.mw*max(abs(source.lw-mean(source.lw))))+params.mw*params.g);
-
-        if source.flags.optimize_k
-%           mode.initialize('khip'  , [0 1],source.khip  *ones(1,2));
-%           mode.initialize('kknee' , [0 1],source.kknee *ones(1,2));
-%           mode.initialize('kankle', [0 1],source.kankle*ones(1,2));
-          
-          %mode.initialize('khip'  , [0 1],1000  *ones(1,2));
-          %mode.initialize('kknee' , [0 1],2000 *ones(1,2));
-          %mode.initialize('kankle', [0 1],2000*ones(1,2));
-          
-          mode.initialize('springK'  , [0 1],[1200,1200;2000,2000;2000,2000]);
+        
+        if flags.optimize_k
+            if source.flags.optimize_k
+                  mode.initialize('khip'  , [0 1],source.khip  *ones(1,2));
+                  mode.initialize('kknee' , [0 1],source.kknee *ones(1,2));
+                  mode.initialize('kankle', [0 1],source.kankle*ones(1,2));
+            else
+              mode.initialize('khip'  , [0 1],params.khip  *ones(1,2));
+          mode.initialize('kknee' , [0 1],params.kknee *ones(1,2));
+          mode.initialize('kankle', [0 1],params.kankle*ones(1,2));
+            end
         end
-
-        if source.flags.optimize_mw
-          mode.initialize('mw'    , [0 1],source.mw    *ones(1,2));
-          %mode.initialize('mw'    , [0 1],1.5    *ones(1,2));
-          %mode.initialize('mw'  , 1, 0.25);
+        
+        if flags.optimize_mw
+            if source.flags.optimize_mw
+              mode.initialize('mw'    , [0,1],source.mw *ones(1,2) );
+            else
+              mode.initialize('mw'    , [0,1],params.mw *ones(1,2)   );
+            end
         end
 
         if mode_N ~=2

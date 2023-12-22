@@ -3,6 +3,7 @@ global flags
 if result.flags.optimize_mw
   fprintf('m_w     = %f\n',result.mw);
 end
+
 if result.flags.optimize_k
   fprintf('k_hip   = %f\n',result.khip);
   fprintf('k_knee  = %f\n',result.kknee);

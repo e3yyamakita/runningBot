@@ -56,7 +56,9 @@ function dae_base(daeh, x, z, u, p)
   daeh.setODE('time'  , 1       );
   
   if flags.optimize_k
-    daeh.setODE('springK'  , [0;0;0]);
+    daeh.setODE('khip'  , 0);
+    daeh.setODE('kknee'  , 0);
+    daeh.setODE('kankle'  , 0);
   end
   
   if flags.optimize_mw

@@ -59,10 +59,9 @@ function vars_base(vh)
   vh.addState('time'  ,'lb',0);
   % params
   if flags.optimize_k
-%     vh.addState('khip'  ,'lb',0, 'ub',1200);    %TODO return to ori 1200
-%     vh.addState('kknee' ,'lb',0, 'ub',2000);
-%     vh.addState('kankle','lb',0, 'ub',2000);
-    vh.addState('springK','s', [3 1],'lb',[0;0;0], 'ub',[4000;4000;4000]);
+    vh.addState('khip'  ,'lb',0, 'ub',4000);    %TODO return to ori 1200
+    vh.addState('kknee' ,'lb',0, 'ub',4000);
+    vh.addState('kankle','lb',0, 'ub',4000);
   end
   if flags.optimize_mw
     vh.addState('mw'    ,'lb', 0.02, 'ub', 1.5);

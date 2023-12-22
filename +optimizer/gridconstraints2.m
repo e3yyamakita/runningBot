@@ -2,7 +2,7 @@
 
 function gridconstraints2(conh, k, K, x, p)
 tic;
-global q0 phi0 dq0 dphi0 pdlw ppdlw step_lb lambda_land
+global q0 phi0 dq0 dphi0 pdlw ppdlw step_lb lambda_land periodic_accuracy_bound
 global ppphi pphi v T
 global flags
 
@@ -59,26 +59,17 @@ if k == K
     mapDerivWOxb = blkdiag(eye(3),swap3x3,swap3x3); % Reset map one derivative without xb; ie. [yb,zb,thb,th...]
     reset_map = blkdiag(mapDerivWOxb,[1],mapDerivWOxb); % Reset pos without x, but reset vel with x
     conh.add(x.period,'==',x.time);
+
+    % Loop acc
+    conh.add(norm([q(2:end);phi]-(mapDerivWOxb*[q0(2:end);phi0])),'<=',periodic_accuracy_bound);
+    conh.add(norm([dq_after;dphi]-[dq0(1);mapDerivWOxb*[dq0(2:end);dphi0]]),'<=',periodic_accuracy_bound);
     
     if flags.optimize_vmode
         conh.add((q(1)-q0(1)),'>=',step_lb); %Minimum step length 
-        % Exact loop
-        %conh.add([q(2:end);phi;dq_after;dphi],'==',reset_map*[q0(2:end);phi0;dq0;dphi0]);
-        %conh.add([q(2:end);phi],'==',reset_map2*[q0(2:end);phi0]);
-        
-        % Loop acc
-        conh.add(norm([q(2:end);phi]-(mapDerivWOxb*[q0(2:end);phi0])),'<=',1e-4);
-        conh.add(norm([dq_after;dphi]-[dq0(1);mapDerivWOxb*[dq0(2:end);dphi0]]),'<=',1e-4);
     else
         conh.add((q(1)-q0(1))/x.time,'==',v); %走行速度
-        
-        % Exact loop
-        %conh.add([q(2:end);phi;dq_after;dphi],'==',reset_map*[q0(2:end);phi0;dq0;dphi0]);
-        
-        % Loop acc
-        conh.add(norm([q(2:end);phi]-(mapDerivWOxb*[q0(2:end);phi0])),'<=',1e-4);
-        conh.add(norm([dq_after;dphi]-[dq0(1);mapDerivWOxb*[dq0(2:end);dphi0]]),'<=',1e-4);
     end
+    
 end
 fprintf('gridconstraints2(k=%2d) complete : %.2f seconds\n',k,toc);
 end

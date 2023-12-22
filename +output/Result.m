@@ -183,13 +183,9 @@ classdef Result
       end
       
       if obj.flags.optimize_k
-%         khips = sol{1}.states.khip.value; obj.khip = khips(1);
-%         kknees = sol{1}.states.kknee.value; obj.kknee = kknees(1);
-%         kankles = sol{1}.states.kankle.value; obj.kankle = kankles(1);
-        springK = sol{1}.states.springK.value;
-        obj.khip = springK(1); 
-        obj.kknee = springK(2);
-        obj.kankle = springK(3);
+         obj.khip = sol{1}.states{[sol{1}.states.size]*[0;1]}.khip.value;
+         obj.kknee = sol{1}.states{[sol{1}.states.size]*[0;1]}.kknee.value;
+         obj.kankle = sol{1}.states{[sol{1}.states.size]*[0;1]}.kankle.value;
       end
       if obj.flags.optimize_mw
 %         mws = sol{1}.states.mw.value; obj.mw = mws(1);

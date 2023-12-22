@@ -14,8 +14,8 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
         tiptoe_bound_init_guess = 0;
     end
 
-    tiptoe_duration_bound = [0,tiptoe_upper_bound];
-    %tiptoe_duration_bound = [1e-4,1e-3];   
+    %tiptoe_duration_bound = [0,tiptoe_upper_bound];
+    tiptoe_duration_bound = [1e-6,tiptoe_upper_bound];   
     %ig = InitialGuess(step, false);
     %ig.draw();
 
@@ -56,7 +56,7 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
     end
 
 
-    load('+results/2023-12-09_05-37-09_g.mat', 'result');
+    load('+results/2023-12-21_18-33-59_g_faster.mat', 'result');
     utils.copy_initial_guess_complete(mode1,1,result);
     utils.copy_initial_guess_complete(mode2,2,result);
     if flags.runtype > 0

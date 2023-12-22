@@ -46,8 +46,8 @@ end
         %conh.add(pj(4,2),'==',0);  % 支持脚かかと
         dq_after_lambda = [M,-Jc1.'; Jc1,zeros(3,3)] \ [M*dq; zeros(3,1)];
         lambda = dq_after_lambda(11:end);
-        conh.add(lambda(1),'<=',lambda(2));
-        conh.add(-lambda(1),'<=',lambda(2));
+%         conh.add(lambda(1),'<=',lambda(2));
+%         conh.add(-lambda(1),'<=',lambda(2));
         conh.add(lambda(2),'>=',0);
         % Impact condition is in transition function
     end

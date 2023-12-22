@@ -30,7 +30,7 @@ function pathcosts(ch, x, z, u, p)
   
   g = 9.80665;
   if flags.optimize_vmode
-    ch.add(100/(x.dxb)/x.period);
+    ch.add(500/(x.dxb)/x.period);
   else
     ch.add(sum(abs(dth.*U))/(M*g*v)/x.period);
   end

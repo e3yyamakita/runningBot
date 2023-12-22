@@ -13,8 +13,8 @@ function dae1(daeh,x,z,u,p)
   U = [u.u1; u.u2; u.u3; u.u4; u.u5; u.u6;];
   if flags.optimize_k
     % spring sttifness of SEA
-    %K = diag(repmat([x.khip x.kknee x.kankle],1,2));
-    K = diag(repmat([x.springK(1) x.springK(2) x.springK(3)],1,2));
+    K = diag(repmat([x.khip x.kknee x.kankle],1,2));
+    
     % inertia of SEA
     B = diag(repmat([params.bhip params.bknee params.bankle],1,2));
   else

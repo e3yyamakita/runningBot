@@ -65,7 +65,9 @@ if flags.runtype ~= 0 || k >= 3
       conh.add(ppphi-2*pphi+phi([1,2,4,5]),'>=',-2)    
   end
 end
+
   ppphi = pphi;
+  
   if flags.use_ankle_sea
     pphi = phi;
   else
