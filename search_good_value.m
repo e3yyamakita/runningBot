@@ -14,6 +14,8 @@ flags.optimize_vmode = 1;   %1/v become function instead of SR
 flags.check()
 
 periodic_accuracy_bound = 1e-3;
+init_guess_source = load("GOOD_FOREFOOT_RUNNING.mat","result").result;
+
 
 for mode1N = 6
     for mode2N = 9
@@ -21,7 +23,7 @@ for mode1N = 6
             for mode4N = 6
                 for vNow = 8
                     v = vNow;
-                    for stepNow = 1.5:0.25:2
+                    for stepNow = 1.65:0.05:1.85
                         step = stepNow;
                         step_lb = max(step/2,step-1); %Lower bound of step length
                         for tiptoenow = 0.1
@@ -31,7 +33,7 @@ for mode1N = 6
                                 for vmode = 1
                                     flags.runtype = runtype;
                                     flags.optimize_vmode = vmode;
-                                    [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N);
+                                    [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,init_guess_source);
                                 end
                             end
                         end
@@ -42,18 +44,13 @@ for mode1N = 6
     end  
 end
 
-      casadi_options.ipopt.max_iter = 100000; %USER MOD I INSERTED THIS TODO REMOVE THIS WHERE IS MAX_ITER IS HERE
-      %WHEREISIT
-%       casadi_options.ipopt.tol = 1e-4;
-%       casadi_options.ipopt.acceptable_tol = 1e-3;
-       casadi_options.ipopt.acceptable_iter = 0;
-%       casadi_options.ipopt.dual_inf_tol = 100;
-%       casadi_options.ipopt.constr_viol_tol = 5e-3;
-      %casadi_options.ipopt.linear_solver = 'wsmp';
-      casadi_options.ipopt.acceptable_tol = 1e-2;
-      %casadi_options.ipopt.expect_infeasible_problem = 'yes';
-      %casadi_options.ipopt.print_level = 6;
-      casadi_options.ipopt.expect_infeasible_problem_ctol = 1e-2;
-      casadi_options.ipopt.required_infeasibility_reduction = 0.95;
-
+%CASADI options used
+%       casadi_options.ipopt.max_iter = 50000;
+%       casadi_options.ipopt.acceptable_iter = 0;
+%       casadi_options.ipopt.acceptable_tol = 1e0;
+%       casadi_options.ipopt.expect_infeasible_problem_ctol = 1e-2;
+%       casadi_options.ipopt.required_infeasibility_reduction = 0.92;
+%       casadi_options.ipopt.acceptable_compl_inf_tol = 1e1;    
+%       casadi_options.ipopt.acceptable_constr_viol_tol = 1e-4;
+   
 %C:\Users\ashaw\AppData\Roaming\MathWorks\MATLAB Add-Ons\Collections\OpenOCL - Open Optimal Control Library\+ocl\+casadi\CasadiSolver.m

@@ -1,4 +1,4 @@
-function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N)
+function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,init_guess_source)
     close all;
     clc;
     clearvars -except mode1N mode2N mode3N mode4N;
@@ -55,13 +55,11 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
 
     end
 
-
-    load('+results/2023-12-21_18-33-59_g_faster.mat', 'result');
-    utils.copy_initial_guess_complete(mode1,1,result);
-    utils.copy_initial_guess_complete(mode2,2,result);
+    utils.copy_initial_guess_complete(mode1,1,init_guess_source);
+    utils.copy_initial_guess_complete(mode2,2,init_guess_source);
     if flags.runtype > 0
-      utils.copy_initial_guess_complete(mode3,3,result);
-      utils.copy_initial_guess_complete(mode4,4,result);
+      utils.copy_initial_guess_complete(mode3,3,init_guess_source);
+      utils.copy_initial_guess_complete(mode4,4,init_guess_source);
     end
 
 
