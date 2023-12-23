@@ -1,7 +1,7 @@
 function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,init_guess_source)
     close all;
     clc;
-    clearvars -except mode1N mode2N mode3N mode4N;
+    clearvars -except mode1N mode2N mode3N mode4N init_guess_source;
     global v step T flags initialized tiptoe_upper_bound tiptoe_bound_init_guess
 
     % ↓ optimization setting ↓

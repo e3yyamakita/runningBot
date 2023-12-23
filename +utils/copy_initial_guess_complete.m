@@ -2,8 +2,6 @@ function copy_initial_guess_complete(mode, mode_N, source)
 global flags tiptoe_bound_init_guess tiptoe_upper_bound mode1N mode2N mode3N mode4N T
 
 % Completely copies all variables from the source as initial guess
-% ModeN (number of data points in a phase) must match the source
-% for different sizes, try v2 or v3.
 
 % Works with 2 phase or 4 phase sources. 
 
@@ -235,13 +233,13 @@ end
         
         if flags.optimize_k
             if source.flags.optimize_k
-                  mode.initialize('khip'  , [0 1],source.khip  *ones(1,2));
-                  mode.initialize('kknee' , [0 1],source.kknee *ones(1,2));
-                  mode.initialize('kankle', [0 1],source.kankle*ones(1,2));
+              mode.initialize('khip'  , [0 1],source.khip  *ones(1,2));
+              mode.initialize('kknee' , [0 1],source.kknee *ones(1,2));
+              mode.initialize('kankle', [0 1],source.kankle*ones(1,2));
             else
               mode.initialize('khip'  , [0 1],params.khip  *ones(1,2));
-          mode.initialize('kknee' , [0 1],params.kknee *ones(1,2));
-          mode.initialize('kankle', [0 1],params.kankle*ones(1,2));
+              mode.initialize('kknee' , [0 1],params.kknee *ones(1,2));
+              mode.initialize('kankle', [0 1],params.kankle*ones(1,2));
             end
         end
         
