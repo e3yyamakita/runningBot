@@ -69,7 +69,8 @@ function dae1(daeh,x,z,u,p)
   end
   
   tau2 = [uw;tau];
-  DAE1 = [M,-Jzmp.'; Jzmp,zeros(3,3)]*[ddq;fe] - [S*tau2-h; -dJzmp*dq];
+  %DAE1 = [M,-Jzmp.'; Jzmp,zeros(3,3)]*[ddq;fe] - [S*tau2-h; -dJzmp*dq];
+  DAE1 = [M,-Jc1.'; Jc1,zeros(3,3)]*[ddq;fe] - [S*tau2-h; -dJc1*dq];
   
   DAE2 = B*ddphi - (U-tau);
   if ~flags.use_ankle_sea
