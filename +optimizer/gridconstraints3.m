@@ -39,7 +39,7 @@ end
         phi0 = phi;
         dq0 = dq;
         dphi0 = dphi;
-    elseif k == K
+    elseif k == K && flags.runtype ~= 5
         M = SEA_model.M(params,x,p);
         Jc1 = SEA_model.Jc1(params,x);
         %conh.add(dpj(2,2),'<=',0); %脚交換制約
@@ -52,13 +52,27 @@ end
         % Impact condition is in transition function
     end
  
+    if ismember(flags.runtype,[5,6])
+        conh.add(pj(2,1),'==',0);
+    end
+    
   ppphi = pphi;
   if flags.use_ankle_sea
     pphi = phi;
   else
     pphi = phi([1,2,4,5]);
   end
-    
+  
+% if k >= 3
+%   if flags.use_ankle_sea  
+%       conh.add(ppphi-2*pphi+phi,'<=',2) %滑らか制約
+%       conh.add(ppphi-2*pphi+phi,'>=',-2)
+%   else
+%       conh.add(ppphi-2*pphi+phi([1,2,4,5]),'<=',2) %滑らか制約
+%       conh.add(ppphi-2*pphi+phi([1,2,4,5]),'>=',-2)    
+%   end
+% end
+  
   ppdlw = pdlw;
   pdlw = dq(4);
   fprintf('gridconstraints3(k=%2d) complete : %.2f seconds\n',k,toc);

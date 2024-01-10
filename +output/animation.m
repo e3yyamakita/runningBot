@@ -108,7 +108,7 @@ for n=1:loop
         k = k + 1;
       end
       % 現在時刻がresult.algvars_time(k2)を上回ったらk2をインクリメント
-      if result.flags.runtype == 0
+      if ismember(result.flags.runtype, [0,5,6])
         while(t>=result.algvars_time(k2) && k2 < result.algvars_size(1))
             k2 = k2 + 1;
         end

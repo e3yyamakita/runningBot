@@ -161,9 +161,10 @@ classdef Result
       obj.imp_foot = zeros(3,0);
       obj.imp_land = zeros(2,0);
       obj.fex = obj.fex.*obj.fey;
-      if obj.flags.runtype == 0
+      
+      if ismember(obj.flags.runtype, [0])
         obj.zmp_x = [sol{1}.integrator.algvars.zmp_x.value];
-      else
+      elseif ismember(obj.flags.runtype, [1:4])
         obj.zmp_x = [sol{2}.integrator.algvars.zmp_x.value];
       end
       
@@ -208,17 +209,17 @@ classdef Result
       obj.solve_time = sol_info.timeMeasures.solveTotal;
       
       if obj.flags.runtype == 0
-            size = sol{2}.states.size;
-            x0 = sol{2}.states{size(2)};
+            last_state_size = sol{2}.states.size;
+            x0 = sol{2}.states{last_state_size(2)};
             p0 = sol{2}.parameters{1};
             M = SEA_model.M(params,x0,p0);
-            Jc1 = SEA_model.Jc1(params,x0);
+            Jc2 = SEA_model.Jc2(params,x0);
             [~, dq, ~, ~] = utils.decompose_state(x0);
-            dq_after_lambda = inv([M,-Jc1.'; Jc1,zeros(3,3)])*[M*dq; zeros(3,1)];
+            dq_after_lambda = inv([M,-Jc2.'; Jc2,zeros(3,3)])*[M*dq; zeros(3,1)];
             obj.imp_foot = dq_after_lambda(11:13).value;
-      elseif obj.flags.runtype > 0          
-            size = sol{1}.states.size;
-            x0 = sol{1}.states{size(2)};
+      elseif obj.flags.runtype < 5          
+            first_state_size = sol{1}.states.size;
+            x0 = sol{1}.states{first_state_size(2)};
             p0 = sol{1}.parameters{1};
             M = SEA_model.M(params,x0,p0);
             Jc1 = SEA_model.Jc1(params,x0);
@@ -226,19 +227,37 @@ classdef Result
             dq_after_lambda = inv([M,-Jc1.'; Jc1,zeros(3,3)])*[M*dq; zeros(3,1)];
             obj.imp_foot = dq_after_lambda(11:13).value;
 
-            size = sol{4}.states.size;
-            x0 = sol{4}.states{size(2)};
+            last_state_size = sol{size(sol,1)}.states.size;
+            x0 = sol{size(sol,1)}.states{last_state_size(2)};
             M = SEA_model.M(params,x0,p0);
-            if obj.flags.runtype == 1
+            if ismember(obj.flags.runtype, [1,3])
                 Jtoe2 = SEA_model.Jtoe2(params,x0);
                 [~, dq, ~, ~] = utils.decompose_state(x0);
                 dq_after_lambda = inv([M,-Jtoe2.'; Jtoe2,zeros(2,2)])*[M*dq; zeros(2,1)];
-            elseif obj.flags.runtype == 2
+            elseif ismember(obj.flags.runtype, [2,4])
                 Jheel2 = SEA_model.Jheel2(params,x0);
                 [~, dq, ~, ~] = utils.decompose_state(x0);
                 dq_after_lambda = inv([M,-Jheel2.'; Jheel2,zeros(2,2)])*[M*dq; zeros(2,1)];
             end
             obj.imp_land = dq_after_lambda(11:12).value;
+      elseif ismember(obj.flags.runtype, [5])
+            last_state_size = sol{2}.states.size;
+            x0 = sol{2}.states{last_state_size(2)};
+            p0 = sol{2}.parameters{1};
+            M = SEA_model.M(params,x0,p0);
+            Jtoe2 = SEA_model.Jtoe2(params,x0);
+            [~, dq, ~, ~] = utils.decompose_state(x0);
+            dq_after_lambda = inv([M,-Jtoe2.'; Jtoe2,zeros(2,2)])*[M*dq; zeros(2,1)];
+            obj.imp_foot = dq_after_lambda(11:12).value;
+      elseif ismember(obj.flags.runtype, [6])
+            last_state_size = sol{2}.states.size;
+            x0 = sol{2}.states{last_state_size(2)};
+            p0 = sol{2}.parameters{1};
+            M = SEA_model.M(params,x0,p0);
+            Jheel2 = SEA_model.Jheel2(params,x0);
+            [~, dq, ~, ~] = utils.decompose_state(x0);
+            dq_after_lambda = inv([M,-Jheel2.'; Jheel2,zeros(2,2)])*[M*dq; zeros(2,1)];
+            obj.imp_foot = dq_after_lambda(11:12).value;
       end
       
       
@@ -388,9 +407,11 @@ classdef Result
         %color = {'r', 'b'};
         utils.back_coloring(section(1:2), color{1});
         utils.back_coloring(section(2:3), color{2});
-        if obj.flags.runtype > 0
+        if ismember(obj.flags.runtype, [1:4])
             utils.back_coloring(section(3:4), color{1});
-            utils.back_coloring([section(4), inf], color{2});
+            if ismember(obj.flags.runtype, [1,2])
+                utils.back_coloring([section(4), inf], color{2});
+            end
         end
     end
   end

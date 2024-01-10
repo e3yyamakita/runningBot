@@ -37,19 +37,19 @@ if k == K
         dq_after_lambda = [M,-Jc2.'; Jc2,zeros(3,3)] \ [M*dq; zeros(3,1)];
         dq_after = dq_after_lambda(1:10);
         lambda = dq_after_lambda(11:13);
-    elseif flags.runtype == 1
+    elseif ismember(flags.runtype, [1,3,5])
         Jtoe2 = SEA_model.Jtoe2(params,x);
         dq_after_lambda = [M,-Jtoe2.'; Jtoe2,zeros(2,2)] \ [M*dq; zeros(2,1)];
         dq_after = dq_after_lambda(1:10);
         lambda = dq_after_lambda(11:12);
-    elseif flags.runtype == 2
+    elseif ismember(flags.runtype, [2,4,6])
         Jheel2 = SEA_model.Jheel2(params,x);
         dq_after_lambda = [M,-Jheel2.'; Jheel2,zeros(2,2)] \ [M*dq; zeros(2,1)];
         dq_after = dq_after_lambda(1:10);
         lambda = dq_after_lambda(11:12);
     end
-    %conh.add(lambda(1),'<=',lambda(2))
-    %conh.add(-lambda(1),'<=',lambda(2)) %TODO make this true
+%     conh.add(lambda(1),'<=',lambda(2))
+%     conh.add(-lambda(1),'<=',lambda(2)) %TODO make this true
     conh.add(lambda(2),'>=',0)
 
     swap3x3 = [

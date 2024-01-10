@@ -19,14 +19,17 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
     %ig = InitialGuess(step, false);
     %ig.draw();
 
-
-    mode1 = ocl.Stage( ...
-      [], ...
-      'vars', @optimizer.vars1, ...
-      'dae', @optimizer.dae1, ...
-      'pathcosts', @optimizer.pathcosts, ...
-      'gridconstraints', @optimizer.gridconstraints1, ...
-      'N', mode1N, 'd', 3); %Full foot support leg
+    if ismember(flags.runtype, [0:4])
+        mode1 = ocl.Stage( ...
+          [], ...
+          'vars', @optimizer.vars1, ...
+          'dae', @optimizer.dae1, ...
+          'pathcosts', @optimizer.pathcosts, ...
+          'gridconstraints', @optimizer.gridconstraints1, ...
+          'N', mode1N, 'd', 3); %Full foot support leg
+        utils.copy_initial_guess_complete(mode1,1,init_guess_source);
+    end
+    
     mode2 = ocl.Stage( ...
       [], ...
       'vars', @optimizer.vars2, ...
@@ -35,8 +38,9 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
       'terminalcost', @optimizer.terminalcost, ...
       'gridconstraints', @optimizer.gridconstraints2, ...
       'N', mode2N, 'd', 3); %Airborne
-
-    if flags.runtype > 0
+    utils.copy_initial_guess_complete(mode2,2,init_guess_source);
+    
+    if  ismember(flags.runtype, [1:6])
       mode3 = ocl.Stage( ...
       [], ...
       'vars', @optimizer.vars3, ...
@@ -44,7 +48,11 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
       'pathcosts', @optimizer.pathcosts, ...
       'gridconstraints', @optimizer.gridconstraints3, ...
       'N', mode3N, 'd', 3); % Tiptoe Touchdown
-
+  
+      utils.copy_initial_guess_complete(mode3,3,init_guess_source);
+    end
+    
+    if ismember(flags.runtype, [1,2])
       mode4 = ocl.Stage( ...
       [], ...
       'vars', @optimizer.vars4, ...
@@ -52,16 +60,8 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
       'pathcosts', @optimizer.pathcosts, ...
       'gridconstraints', @optimizer.gridconstraints4, ...
       'N', mode4N, 'd', 3); % Tiptoe Touchdown
-
-    end
-
-    utils.copy_initial_guess_complete(mode1,1,init_guess_source);
-    utils.copy_initial_guess_complete(mode2,2,init_guess_source);
-    if flags.runtype > 0
-      utils.copy_initial_guess_complete(mode3,3,init_guess_source);
       utils.copy_initial_guess_complete(mode4,4,init_guess_source);
     end
-
 
     if  flags.runtype == 0
         period_bound = period_init_guess*[0.2, 0.6, 0.8, 1.2];
@@ -90,20 +90,28 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
     if flags.runtype == 0
         ocp = ocl.MultiStageProblem({mode1,mode2}, ...
                                 {@optimizer.trans_stand2float});
-    else                        
-         ocp = ocl.MultiStageProblem({mode3,mode1,mode4,mode2}, ...
+    elseif ismember(flags.runtype, [1,2])                    
+        ocp = ocl.MultiStageProblem({mode3,mode1,mode4,mode2}, ...
                                  {@optimizer.trans_ankle_touchdown,@optimizer.trans_stand2float,@optimizer.trans_stand2float});
+    elseif ismember(flags.runtype, [3,4])
+        ocp = ocl.MultiStageProblem({mode3,mode1,mode2}, ...
+                                 {@optimizer.trans_ankle_touchdown,@optimizer.trans_stand2float});
+    elseif ismember(flags.runtype, [5,6])
+        ocp = ocl.MultiStageProblem({mode3,mode2}, ...
+                                {@optimizer.trans_stand2float});
     end
 
     % save console log
     exe_time = now;
     [~,~]=mkdir('+console');
-    console_filename = ['+console/' datestr(exe_time,'yyyy-mm-dd_HH-MM-SS') '.log'];
+    suffix = ["flat-","fore-","back-","fore3phase-","back3phase-","purefore-","pureback-"];
+    veltype = ["vlock-","vopt-"];
+    console_filename = join(['+console/' datestr(exe_time,'yyyy-mm-dd_HH-MM-SS-') suffix(flags.runtype+1) veltype(flags.optimize_vmode+1) '.log'],'');
     diary(console_filename)
 
     % solve
     disp("Starting with ");
-    disp([mode1N,mode2N,mode3N,v,step,tiptoe_upper_bound]);
+    disp([mode1N,mode2N,mode3N,mode4N,v,step,tiptoe_upper_bound]);
     [sol,times, sol_info] = ocp.solve();
 
     result = output.Result(sol, times, flags, sol_info);
@@ -111,12 +119,19 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
     % save results to file
     %if (sol_info.success || ~strcmp(sol_info.ipopt_stats.return_status,'Infeasible_Problem_Detected'))
         [~,~]=mkdir('+results');
-        result_filename = [datestr(exe_time,'yyyy-mm-dd_HH-MM-SS') '.mat'];
-        save(['+results/' result_filename],'sol','times','result','flags','v','step');
+        if (sol_info.success)
+           outcome = 'Scs';
+        elseif sol_info.ipopt_stats.return_status == "Infeasible_Problem_Detected"
+           outcome = 'Inf';
+        elseif sol_info.ipopt_stats.return_status == "Maximum_Iterations_Exceeded"
+            outcome = 'Max';
+        end
+        result_filename = convertStringsToChars(join(['+results/' datestr(exe_time,'yyyy-mm-dd_HH-MM-SS-') suffix(flags.runtype+1)  veltype(flags.optimize_vmode+1) outcome '.mat'],''));
+        save(result_filename,'sol','times','result','flags','v','step');
 
     %     diary off;
 
-        data_name = [datestr(exe_time,'yyyy-mm-dd_HH-MM-SS')];
+        data_name = convertStringsToChars(join([datestr(exe_time,'yyyy-mm-dd_HH-MM-SS-') suffix(flags.runtype+1) veltype(flags.optimize_vmode+1) outcome],''));
         output.result_txt(result,data_name);
     %end
     diary off

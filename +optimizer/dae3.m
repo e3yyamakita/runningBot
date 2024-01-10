@@ -68,12 +68,12 @@ function dae3(daeh,x,z,u,p)
   end
   
   tau2 = [uw;tau];
-  if flags.runtype == 1
+  if ismember(flags.runtype, [1,3,5])
       Jtoe = SEA_model.Jtoe(params,x,z);
       dJtoe = SEA_model.dJtoe(params,x,z);
       fe = [z.fex*z.fey; z.fey];
       DAE1 = [M,-Jtoe.'; Jtoe,zeros(2,2)]*[ddq;fe] - [S*tau2-h; -dJtoe*dq];
-  elseif flags.runtype == 2    
+  elseif ismember(flags.runtype, [2,4,6])
       Jheel = SEA_model.Jheel(params,x,z);
       dJheel = SEA_model.dJheel(params,x,z);
       fe = [z.fex*z.fey; z.fey];

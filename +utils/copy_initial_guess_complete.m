@@ -18,18 +18,18 @@ if size(source.state_size,2) == 2
        algvars_time_grid = normalize(source.algvars_time(algvars_data_grid),'range');
         
         i = 1;
-while i < length(state_time_grid)
-    while state_time_grid(i) >= state_time_grid(i+1)
-        state_time_grid(i) = [];
-        state_data_grid(i) = [];
-    end
-    i=i+1;
-end
+        while i < length(state_time_grid)
+            while state_time_grid(i) >= state_time_grid(i+1)
+                state_time_grid(i) = [];
+                state_data_grid(i) = [];
+            end
+            i=i+1;
+        end
 
        mode.initialize('time', state_time_grid,...
            source.time(state_data_grid)+tiptoe_bound_init_guess*ones(size(state_time_grid)));
 
-    elseif mode_N == 2
+   elseif mode_N == 2
         state_data_grid = [source.state_size(1)+1:sum(source.state_size(1:2))];
         state_time_grid = normalize(source.time(state_data_grid)-source.time(source.state_size(1)+1),'range');
         
@@ -78,6 +78,51 @@ end
         %mode.initialize('time', [0 1], source.time(state_data_grid)+tiptoe_upper_bound*ones(size(state_time_grid)));
         mode.initialize('time', [0 1], source.time(state_data_grid)+tiptoe_upper_bound*ones(size(state_time_grid)));
     end
+elseif  size(source.state_size,2) == 3
+    if mode_N == 1
+        
+        state_data_grid = [source.state_size(1)+1:sum(source.state_size(1:2))];
+        state_time_grid = normalize(source.time(state_data_grid)-source.time(state_data_grid(1)),'range');
+        
+        control_data_grid = [source.control_size(1)+1:sum(source.control_size(1:2))];
+        control_time_grid = normalize(source.control_time(control_data_grid)-source.control_time(control_data_grid(1)),'range');
+        
+        algvars_data_grid = [source.algvars_size(1)+1:sum(source.algvars_size(1:2))];
+        algvars_time_grid = normalize(source.algvars_time(algvars_data_grid)-source.algvars_time(algvars_data_grid(1)),'range');
+
+    elseif mode_N == 2
+    
+        state_data_grid = [source.state_size(2)+1:sum(source.state_size(1:3))];
+        state_time_grid = normalize(source.time(state_data_grid)-source.time(state_data_grid(1)),'range');
+        
+        control_data_grid = [source.control_size(2)+1:sum(source.control_size(1:3))];
+        control_time_grid = normalize(source.control_time(control_data_grid)-source.control_time(control_data_grid(1)),'range'); 
+        
+        algvars_data_grid = [source.algvars_size(2)+1:sum(source.algvars_size(1:3))];
+        algvars_time_grid = normalize(source.algvars_time(algvars_data_grid)-source.algvars_time(algvars_data_grid(1)),'range');        
+
+    elseif mode_N == 3
+       
+        state_data_grid = [1:source.state_size(1)];
+        state_time_grid = normalize(source.time(state_data_grid),'range');
+        
+        control_data_grid = [1:source.control_size(1)];
+        control_time_grid = normalize(source.control_time(control_data_grid),'range');
+        
+        algvars_data_grid = [1:source.algvars_size(1)];
+        algvars_time_grid = normalize(source.algvars_time(algvars_data_grid),'range');
+    end
+    i = 1;
+    
+    while i < length(state_time_grid)-1
+        while i < length(state_time_grid)-1 && state_time_grid(i) >= state_time_grid(i+1)
+            state_time_grid(i) = [];
+            state_data_grid(i) = [];
+        end
+        i=i+1;
+    end
+   mode.initialize('time', state_time_grid,...
+           source.time(state_data_grid));
 elseif  size(source.state_size,2) == 4
     if mode_N == 1
         
@@ -125,16 +170,15 @@ elseif  size(source.state_size,2) == 4
     end
     i = 1;
     
-while i < length(state_time_grid)-1
-    while i < length(state_time_grid)-1 && state_time_grid(i) >= state_time_grid(i+1)
-        state_time_grid(i) = [];
-        state_data_grid(i) = [];
+    while i < length(state_time_grid)-1
+        while i < length(state_time_grid)-1 && state_time_grid(i) >= state_time_grid(i+1)
+            state_time_grid(i) = [];
+            state_data_grid(i) = [];
+        end
+        i=i+1;
     end
-    i=i+1;
-end
    mode.initialize('time', state_time_grid,...
            source.time(state_data_grid));
-else
     disp("Dimension mismatch for intial guess")
 end
 
@@ -228,8 +272,8 @@ end
         mode.initialize('u4' , control_time_grid, source.u4(control_data_grid) );
         mode.initialize('u5' , control_time_grid, source.u5(control_data_grid) );
         mode.initialize('u6' , control_time_grid, source.u6(control_data_grid) );
-        %mode.initialize('uw' , control_time_grid, source.uw(control_data_grid) );
-        mode.initialize('uw' , control_time_grid, ((4*pi^2/T^2)*sin(2*pi*source.algvars_time(control_data_grid)/T)/params.mw*max(abs(source.lw-mean(source.lw))))+params.mw*params.g);
+        mode.initialize('uw' , control_time_grid, source.uw(control_data_grid) );
+        %mode.initialize('uw' , control_time_grid, ((4*pi^2/T^2)*sin(2*pi*source.algvars_time(control_data_grid)/T)/params.mw*max(abs(source.lw-mean(source.lw))))+params.mw*params.g);
         
         if flags.optimize_k
             if source.flags.optimize_k
@@ -257,6 +301,7 @@ end
         end
 
         if mode_N == 1
-          mode.initialize('zmp_x', [1:source.algvars_size(size(source.state_size,2)/2)], source.zmp_x);
+          
+          mode.initialize('zmp_x', [1:source.algvars_size(ceil(size(source.state_size,2)/2))], source.zmp_x);
           mode.initialize('feth', algvars_time_grid, source.feth(algvars_data_grid));
         end

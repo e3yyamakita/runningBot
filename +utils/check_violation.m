@@ -9,12 +9,12 @@ function check_violation(source,sol,periodic_accuracy_bound)
         dq_after_lambda = [M,-Jc2.'; Jc2,zeros(3,3)] \ [M*dq(:,end); zeros(3,1)];
         dq_after = dq_after_lambda(1:10);
         lambda = dq_after_lambda(11:13);
-    elseif source.flags.runtype == 1
+    elseif ismember(source.flags.runtype, [1,3,5])
         Jtoe2 = SEA_model.Jtoe2(params,x);
         dq_after_lambda = [M,-Jtoe2.'; Jtoe2,zeros(2,2)] \ [M*dq(:,end); zeros(2,1)];
         dq_after = dq_after_lambda(1:10);
         lambda = dq_after_lambda(11:12);
-    elseif source.flags.runtype == 2
+    elseif ismember(source.flags.runtype, [2,4,6])
         Jheel2 = SEA_model.Jheel2(params,x);
         dq_after_lambda = [M,-Jheel2.'; Jheel2,zeros(2,2)] \ [M*dq(:,end); zeros(2,1)];
         dq_after = dq_after_lambda(1:10);
