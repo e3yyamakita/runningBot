@@ -2,8 +2,6 @@
 *.mp4
 *.avi
 *.png
-+results/
 +for_slide_result/
 +SEA_model/
-+console/
 +zmp_result/
