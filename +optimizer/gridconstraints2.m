@@ -3,7 +3,7 @@
 function gridconstraints2(conh, k, K, x, p)
 tic;
 global q0 phi0 dq0 dphi0 pdlw ppdlw lambda_land periodic_accuracy_bound
-global ppphi pphi T
+global ppphi pphi
 global flags
 
 % 共通部分

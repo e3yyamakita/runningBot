@@ -1,5 +1,5 @@
 function copy_initial_guess_complete(mode, mode_N, source)
-global flags tiptoe_bound_init_guess tiptoe_upper_bound mode1N mode2N mode3N mode4N T
+global flags tiptoe_bound_init_guess tiptoe_upper_bound mode1N mode2N mode3N mode4N
 
 % Completely copies all variables from the source as initial guess
 
@@ -216,7 +216,7 @@ end
         mode.initialize('yb'  , state_time_grid, source.yb(state_data_grid)  );
         mode.initialize('thb' , state_time_grid, source.thb(state_data_grid) );
         %mode.initialize('lw'  , state_time_grid, source.lw(state_data_grid)  );
-        mode.initialize('lw'  , state_time_grid, -sin(2*pi*source.time(state_data_grid)/T)*max(abs(source.lw-mean(source.lw)))+mean(source.lw));
+        mode.initialize('lw'  , state_time_grid, -sin(2*pi*source.time(state_data_grid)/source.time(end))*max(abs(source.lw-mean(source.lw)))+mean(source.lw));
         mode.initialize('th1' , state_time_grid, source.th1(state_data_grid) );
         mode.initialize('th2' , state_time_grid, source.th2(state_data_grid) );
         mode.initialize('th3' , state_time_grid, source.th3(state_data_grid) );
@@ -234,7 +234,7 @@ end
         mode.initialize('dyb'  , state_time_grid, source.dyb(state_data_grid)  );
         mode.initialize('dthb' , state_time_grid, source.dthb(state_data_grid) );
         %mode.initialize('dlw'  , state_time_grid, source.dlw(state_data_grid)  );
-        mode.initialize('dlw'  , state_time_grid, -2*pi/T*cos(2*pi*source.time(state_data_grid)/T)*max(abs(source.lw-mean(source.lw))));
+        mode.initialize('dlw'  , state_time_grid, -2*pi/source.time(end)*cos(2*pi*source.time(state_data_grid)/source.time(end))*max(abs(source.lw-mean(source.lw))));
         mode.initialize('dth1' , state_time_grid, source.dth1(state_data_grid) );
         mode.initialize('dth2' , state_time_grid, source.dth2(state_data_grid) );
         mode.initialize('dth3' , state_time_grid, source.dth3(state_data_grid) );
@@ -252,7 +252,7 @@ end
         mode.initialize('ddyb'  , algvars_time_grid, source.ddyb(algvars_data_grid)  );
         mode.initialize('ddthb' , algvars_time_grid, source.ddthb(algvars_data_grid) );
         %mode.initialize('ddlw'  , algvars_time_grid, source.ddlw(algvars_data_grid)  );
-        mode.initialize('ddlw'  , algvars_time_grid, 4*pi^2/T^2*sin(2*pi*source.algvars_time(algvars_data_grid)./T)*max(abs(source.lw-mean(source.lw))));
+        mode.initialize('ddlw'  , algvars_time_grid, 4*pi^2/source.time(end)^2*sin(2*pi*source.algvars_time(algvars_data_grid)./source.time(end))*max(abs(source.lw-mean(source.lw))));
         mode.initialize('ddth1' , algvars_time_grid, source.ddth1(algvars_data_grid) );
         mode.initialize('ddth2' , algvars_time_grid, source.ddth2(algvars_data_grid) );
         mode.initialize('ddth3' , algvars_time_grid, source.ddth3(algvars_data_grid) );

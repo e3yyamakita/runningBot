@@ -2,11 +2,18 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
     close all;
     clc;
     clearvars -except mode1N mode2N mode3N mode4N init_guess_source;
-    global v step T flags initialized tiptoe_upper_bound tiptoe_bound_init_guess
-
+    global v step flags initialized tiptoe_upper_bound tiptoe_bound_init_guess
+ 
     % ↓ optimization setting ↓
     period_init_guess = step/v;
-    T = period_init_guess;
+    opt = ocl.casadi.CasadiOptions();
+    opt.ipopt.max_iter = 5;
+    opt.ipopt.acceptable_iter = 0;
+    opt.ipopt.acceptable_tol = 1e0;
+    opt.ipopt.expect_infeasible_problem_ctol = 1e-2;
+    opt.ipopt.required_infeasibility_reduction = 0.92;
+    opt.ipopt.acceptable_compl_inf_tol = 1e2;    
+    opt.ipopt.acceptable_constr_viol_tol = 1e-4;
     % ↑ optimization setting ↑
 
     if flags.runtype == 0
@@ -89,18 +96,22 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
 
     if flags.runtype == 0
         ocp = ocl.MultiStageProblem({mode1,mode2}, ...
-                                {@optimizer.trans_stand2float});
+                                {@optimizer.trans_stand2float},...
+                                'casadi_options',opt);
     elseif ismember(flags.runtype, [1,2])                    
         ocp = ocl.MultiStageProblem({mode3,mode1,mode4,mode2}, ...
-                                 {@optimizer.trans_ankle_touchdown,@optimizer.trans_stand2float,@optimizer.trans_stand2float});
+                                 {@optimizer.trans_ankle_touchdown,@optimizer.trans_stand2float,@optimizer.trans_stand2float},...
+                                'casadi_options',opt);
     elseif ismember(flags.runtype, [3,4])
         ocp = ocl.MultiStageProblem({mode3,mode1,mode2}, ...
-                                 {@optimizer.trans_ankle_touchdown,@optimizer.trans_stand2float});
+                                 {@optimizer.trans_ankle_touchdown,@optimizer.trans_stand2float},...
+                                'casadi_options',opt);
     elseif ismember(flags.runtype, [5,6])
         ocp = ocl.MultiStageProblem({mode3,mode2}, ...
-                                {@optimizer.trans_stand2float});
+                                {@optimizer.trans_stand2float},...
+                                'casadi_options',opt);
     end
-
+    
     % save console log
     exe_time = now;
     [~,~]=mkdir('+console');

@@ -1,7 +1,7 @@
 function pathcosts(ch, x, z, u, p)
  % ステージコスト
   tic;
-  global v T flags alpha q0
+  global v flags alpha q0
 
   if flags.use_ankle_sea
     actuator_vel = [x.dphi1;x.dphi2;x.dphi3;x.dphi4;x.dphi5;x.dphi6];
