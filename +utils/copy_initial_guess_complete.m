@@ -294,14 +294,20 @@ end
               mode.initialize('mw'    , [0,1],params.mw *ones(1,2)   );
             end
         end
-
+        
+        mode.initialize('period', [0 1],source.time(end));
+        
+        if flags.optimize_vmode
+            mode.initialize('velocity_achieved', [0 1],source.v);
+        end
+        
+        
         if mode_N ~=2
           mode.initialize('fex', algvars_time_grid, source.fex(algvars_data_grid)./source.fey(algvars_data_grid));
           mode.initialize('fey', algvars_time_grid, source.fey(algvars_data_grid));
         end
 
         if mode_N == 1
-          
           mode.initialize('zmp_x', [1:source.algvars_size(ceil(size(source.state_size,2)/2))], source.zmp_x);
           mode.initialize('feth', algvars_time_grid, source.feth(algvars_data_grid));
         end

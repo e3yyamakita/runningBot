@@ -2,8 +2,8 @@
 
 function gridconstraints2(conh, k, K, x, p)
 tic;
-global q0 phi0 dq0 dphi0 pdlw ppdlw step_lb lambda_land periodic_accuracy_bound
-global ppphi pphi v T
+global q0 phi0 dq0 dphi0 pdlw ppdlw lambda_land periodic_accuracy_bound
+global ppphi pphi T
 global flags
 
 % 共通部分
@@ -65,11 +65,26 @@ if k == K
     conh.add(norm([dq_after;dphi]-[dq0(1);mapDerivWOxb*[dq0(2:end);dphi0]]),'<=',periodic_accuracy_bound);
     
     if flags.optimize_vmode
-        conh.add((q(1)-q0(1)),'>=',step_lb); %Minimum step length 
+        conh.add((q(1)-q0(1)/x.period),'==',x.velocity_achieved);
     else
-        conh.add((q(1)-q0(1))/x.time,'==',v); %走行速度
+        conh.add((q(1)-q0(1))/x.period,'==',p.velocity_achieved); %走行速度
     end
     
 end
+
+    if flags.use_ankle_sea  
+        conh.add(ppphi-2*pphi+phi,'<=',2) %滑らか制約
+        conh.add(ppphi-2*pphi+phi,'>=',-2)
+    else
+        conh.add(ppphi-2*pphi+phi([1,2,4,5]),'<=',2) %滑らか制約
+        conh.add(ppphi-2*pphi+phi([1,2,4,5]),'>=',-2)    
+    end
+      ppphi = pphi;
+    if flags.use_ankle_sea
+      pphi = phi;
+    else
+      pphi = phi([1,2,4,5]);
+    end
+    
 fprintf('gridconstraints2(k=%2d) complete : %.2f seconds\n',k,toc);
 end

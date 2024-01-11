@@ -1,17 +1,17 @@
 function pathcosts(ch, x, z, u, p)
  % ステージコスト
   tic;
-  global v T flags
+  global v T flags alpha q0
 
   if flags.use_ankle_sea
-    dphi = [x.dphi1;x.dphi2;x.dphi3;x.dphi4;x.dphi5;x.dphi6];
+    actuator_vel = [x.dphi1;x.dphi2;x.dphi3;x.dphi4;x.dphi5;x.dphi6];
     if flags.use_wobbling_mass
-        dphi = [dphi;x.dlw];
+        actuator_vel = [actuator_vel;x.dlw];
     end
   else
-    dth = [x.dphi1;x.dphi2;x.dth3;x.dphi4;x.dphi5;x.dth6];
+    actuator_vel = [x.dphi1;x.dphi2;x.dth3;x.dphi4;x.dphi5;x.dth6];
     if flags.use_wobbling_mass
-        dth = [dth;x.dlw];
+        actuator_vel = [actuator_vel;x.dlw];
     end
   end
   
@@ -29,11 +29,11 @@ function pathcosts(ch, x, z, u, p)
   end
   
   g = 9.80665;
-  alpha = 0.8;
+
   if flags.optimize_vmode
-    ch.add(alpha * 500/(x.dxb)/x.period + (1-alpha)*sum(abs(dth.*U))/(M*g*v)/x.period);
+    ch.add((1-alpha)*sum(abs(actuator_vel.*U))/(M*g*x.velocity_achieved)/x.period);
   else
-    ch.add(sum(abs(dth.*U))/(M*g*v)/x.period);
+    ch.add(sum(abs(actuator_vel.*U))/(M*g*p.velocity_achieved)/x.period);
   end
   
   fprintf('pathcosts             complete : %.2f seconds\n',toc);

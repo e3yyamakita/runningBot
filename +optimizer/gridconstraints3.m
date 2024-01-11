@@ -63,17 +63,17 @@ end
     pphi = phi([1,2,4,5]);
   end
   
-% if k >= 3
-%   if flags.use_ankle_sea  
-%       conh.add(ppphi-2*pphi+phi,'<=',2) %滑らか制約
-%       conh.add(ppphi-2*pphi+phi,'>=',-2)
-%   else
-%       conh.add(ppphi-2*pphi+phi([1,2,4,5]),'<=',2) %滑らか制約
-%       conh.add(ppphi-2*pphi+phi([1,2,4,5]),'>=',-2)    
-%   end
-% end
+    if k >= 3
+      if flags.use_ankle_sea  
+          conh.add(ppphi-2*pphi+phi,'<=',2) %滑らか制約
+          conh.add(ppphi-2*pphi+phi,'>=',-2)
+      else
+          conh.add(ppphi-2*pphi+phi([1,2,4,5]),'<=',2) %滑らか制約
+          conh.add(ppphi-2*pphi+phi([1,2,4,5]),'>=',-2)    
+      end
+    end
   
-  ppdlw = pdlw;
-  pdlw = dq(4);
+%   ppdlw = pdlw;
+%   pdlw = dq(4);
   fprintf('gridconstraints3(k=%2d) complete : %.2f seconds\n',k,toc);
 end

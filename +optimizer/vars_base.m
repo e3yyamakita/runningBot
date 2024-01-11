@@ -1,6 +1,6 @@
 function vars_base(vh)
 
-  global step flags v
+  global flags alpha v step
   % State x
   vh.addState('xb');
   vh.addState('yb',  'lb',     0);
@@ -123,7 +123,14 @@ function vars_base(vh)
     vh.addControl('uw','lb',0,'ub',0);
   end
   % Parameter p
-  vh.addParameter('p3', 'default', step);
+  vh.addParameter('alpha', 'default', alpha);
+  
+  if flags.optimize_vmode
+    vh.addState('velocity_achieved','lb',0);
+  else
+    vh.addParameter('velocity_achieved', 'default', v);
+  end
 
   vh.addState('period','lb',0.5*step/v,'ub',1.5*step/v);
+  
 end

@@ -34,7 +34,6 @@ for num=1:2
     th6  = sol.states.th6.value;
     % time = times.states.value;
     time =  sol.states.time.value;
-    step = sum(sol.parameters.p3.value)/length(sol.parameters.p3.value);
 
 
     for k = 1:length(time)

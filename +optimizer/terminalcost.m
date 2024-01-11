@@ -1,7 +1,7 @@
-function pathcosts(ch, x, z, u, p)
+function terminalcost(ch, x, z, u, p)
   tic;
-  global v T flags
+  global v T flags q0
   if flags.optimize_vmode
-    %ch.add(1/(x.xb)/T);
+    ch.add(p.alpha*x.velocity_achieved);
   end
 end

@@ -45,4 +45,5 @@ if flags.optimize_mw
   ch.add(x0.mw, '==', xF.mw);
 end
 ch.add(x0.time,'==',xF.time);
+ch.add(x0.period, '==', xF.period);
 end

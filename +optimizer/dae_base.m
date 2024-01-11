@@ -65,5 +65,9 @@ function dae_base(daeh, x, z, u, p)
     daeh.setODE('mw'    , 0);
   end
   
+  if flags.optimize_vmode
+    daeh.setODE('velocity_achieved', 0);
+  end
+  
   daeh.setODE('period', 0);
 end
