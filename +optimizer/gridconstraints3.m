@@ -15,11 +15,18 @@ function gridconstraints3(conh, k, K, x, p)
   %% 各関節が地面より上(y座標制約)
   conh.add(pj(1,2),'>=',0); % Supp Knee
   %conh.add(pj(2,2),'>=',0); % Supp ankle
-if ~(k==K) 
-  conh.add(pj(3,2),'>=',0); % Supp Toe
-end
 
-  conh.add(pj(4,2),'==',0); % Supp heel
+  if ismember(flags.runtype, [1,3,5]) %Fore
+      conh.add(pj(3,2),'==',0); % Supp Toe
+      if ~(k==K)
+          conh.add(pj(4,2),'>=',0); % Supp heel
+      end 
+  elseif ismember(flags.runtype, [2,4,6]) % Back
+      conh.add(pj(4,2),'==',0); % Supp Heel
+      if ~(k==K)
+          conh.add(pj(3,2),'>=',0); % Supp toe
+      end 
+  end
 
   
   conh.add(pj(5,2),'>=',0); % Swng Knee
@@ -33,7 +40,11 @@ end
   
   %% 遊脚前進制約
     if k == 1
-        conh.add(pj(4,2),'>=',0);  % 支持脚かかと
+        if ismember(flags.runtype, [1,3,5]) %Fore
+            conh.add(pj(4,2),'>=',0);  % 支持脚かかと
+        elseif ismember(flags.runtype, [2,4,6]) %Back
+            conh.add(pj(3,2),'>=',0);
+        end
         conh.add(dpj(6,2),'>=',0); %脚交換制約
         q0 = q;
         phi0 = phi;
@@ -73,7 +84,13 @@ end
       end
     end
   
-%   ppdlw = pdlw;
-%   pdlw = dq(4);
+
+if k >= 3
+  conh.add(ppdlw-2*pdlw+dq(4),'<=',2) %滑らか制約
+  conh.add(ppdlw-2*pdlw+dq(4),'>=',-2)
+end
+
+  ppdlw = pdlw;
+  pdlw = dq(4);
   fprintf('gridconstraints3(k=%2d) complete : %.2f seconds\n',k,toc);
 end

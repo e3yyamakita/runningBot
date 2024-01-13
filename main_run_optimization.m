@@ -1,28 +1,29 @@
 function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,init_guess_source)
     close all;
     clc;
+    
     clearvars -except mode1N mode2N mode3N mode4N init_guess_source;
-    global v step flags initialized tiptoe_upper_bound tiptoe_bound_init_guess
- 
+    global v step flags tiptoe_upper_bound tiptoe_bound_init_guess alpha
+    
     % ↓ optimization setting ↓
     period_init_guess = step/v;
     opt = ocl.casadi.CasadiOptions();
-    opt.ipopt.max_iter = 5;
+    opt.ipopt.max_iter = 40000;
     opt.ipopt.acceptable_iter = 0;
     opt.ipopt.acceptable_tol = 1e0;
     opt.ipopt.expect_infeasible_problem_ctol = 1e-2;
     opt.ipopt.required_infeasibility_reduction = 0.92;
     opt.ipopt.acceptable_compl_inf_tol = 1e2;    
-    opt.ipopt.acceptable_constr_viol_tol = 1e-4;
+    opt.ipopt.acceptable_constr_viol_tol = 1e-3;
     % ↑ optimization setting ↑
-
+    
     if flags.runtype == 0
         tiptoe_upper_bound = 0;
         tiptoe_bound_init_guess = 0;
     end
 
     %tiptoe_duration_bound = [0,tiptoe_upper_bound];
-    tiptoe_duration_bound = [1e-6,tiptoe_upper_bound];   
+    tiptoe_duration_bound = [1e-8,tiptoe_upper_bound];   
     %ig = InitialGuess(step, false);
     %ig.draw();
 
@@ -79,6 +80,9 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
     else
         period_bound = period_init_guess*[tiptoe_upper_bound 0.2 0.5 1];
         mode3.setInitialStateBounds('time', 0);
+
+        mode3.setEndStateBounds('time', 0, tiptoe_duration_bound(2));
+        mode1.setInitialStateBounds('time', 0, tiptoe_duration_bound(2));
 
 %         mode3.setEndStateBounds('time', period_bound(1)*0.8, period_bound(1)*1.2);
 %         mode1.setInitialStateBounds('time', period_bound(1)*0.8, period_bound(1)*1.2);

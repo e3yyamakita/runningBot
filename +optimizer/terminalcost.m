@@ -1,4 +1,5 @@
-function terminalcost(ch, x, z, u, p)
+%function terminalcost(ch, x, p)
+function terminalcost(ch, x, p)
   tic;
   global v flags q0
   if flags.optimize_vmode
