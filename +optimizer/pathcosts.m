@@ -31,7 +31,8 @@ function pathcosts(ch, x, z, u, p)
   g = 9.80665;
 
   if flags.optimize_vmode
-    ch.add((1-alpha)*sum(abs(actuator_vel.*U))/(M*g*x.velocity_achieved)/x.period);
+    ch.add(alpha * 500/(x.dxb)/x.period + (1-alpha)*sum(abs(actuator_vel.*U))/(M*g*x.velocity_achieved)/x.period);
+    %ch.add((1-alpha)*sum(abs(actuator_vel.*U))/(M*g*x.velocity_achieved)/x.period);
   else
     ch.add(sum(abs(actuator_vel.*U))/(M*g*p.velocity_achieved)/x.period);
   end

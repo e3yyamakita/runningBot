@@ -46,4 +46,7 @@ if flags.optimize_mw
 end
 ch.add(x0.time,'==',xF.time);
 ch.add(x0.period, '==', xF.period);
+  if flags.optimize_vmode
+    ch.add(x0.velocity_achieved, '==', xF.velocity_achieved);
+  end
 end

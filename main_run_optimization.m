@@ -142,6 +142,7 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
             outcome = 'Max';
         end
         result_filename = convertStringsToChars(join(['+results/' datestr(exe_time,'yyyy-mm-dd_HH-MM-SS-') suffix(flags.runtype+1)  veltype(flags.optimize_vmode+1) outcome '.mat'],''));
+        
         save(result_filename,'sol','times','result','flags','v','step');
 
     %     diary off;

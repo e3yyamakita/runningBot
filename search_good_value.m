@@ -16,62 +16,71 @@ flags.optimize_vmode = 1;   %1/v become function instead of SR
 flags.check()
 
 periodic_accuracy_bound = 1e-3;
-alpha = 0.8;
-init_guess_source = load("+results/2024-01-10_17-15-59-flat-vopt-S.mat","result").result;
-for mode1N = 6
-    for mode2N = 9
-        for mode3N = 3
-            for mode4N = 6
-                for vNow = 12
-                    v = vNow;
-                    for stepNow = 1.9:0.2:2.1
-                        step = stepNow;
-                        step_lb = max(step/2,step-1); %Lower bound of step length
-                        for tiptoenow = 0.1
-                            tiptoe_upper_bound = tiptoenow;
-                            tiptoe_bound_init_guess = tiptoenow;
-                            for runtype = [0]
-                                for vmode = [0,1]
-                                    flags.runtype = runtype;
-                                    flags.optimize_vmode = vmode;
-                                    [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,init_guess_source);
+alpha = 1;
+flags.use_ankle_sea = false;
+for source = ["+results/2024-01-10_17-15-59-flat-vopt-S.mat"]
+    init_guess_source = load(source,"result").result;
+    for mode1N = 6
+        for mode2N = 9
+            for mode3N = 3
+                for mode4N = 6
+                    for vNow = [12]
+                        v = vNow;
+                        for stepNow = [1.9,2]
+                            step = stepNow;
+                            step_lb = max(step/2,step-1); %Lower bound of step length
+                            for tiptoenow = 1e-1
+                                tiptoe_upper_bound = tiptoenow;
+                                tiptoe_bound_init_guess = tiptoenow;
+                                for runtype = [0]
+                                    for vmode = [1]
+                                        flags.runtype = runtype;
+                                        flags.optimize_vmode = vmode;
+                                        [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,init_guess_source);
+                                    end
                                 end
                             end
                         end
                     end
                 end
             end
-        end
-    end  
+        end  
+    end
 end
 
-init_guess_source = load("+results/2024-01-10_19-07-33-fore3phase-vopt-Scs.mat","result").result;
-for mode1N = 6
-    for mode2N = 9
-        for mode3N = 3
-            for mode4N = 6
-                for vNow = 12
-                    v = vNow;
-                    for stepNow = 1.9:0.2:2.1
-                        step = stepNow;
-                        step_lb = max(step/2,step-1); %Lower bound of step length
-                        for tiptoenow = 0.1
-                            tiptoe_upper_bound = tiptoenow;
-                            tiptoe_bound_init_guess = tiptoenow;
-                            for runtype = [3]
-                                for vmode = [0,1]
-                                    flags.runtype = runtype;
-                                    flags.optimize_vmode = vmode;
-                                    [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,init_guess_source);
+flags.optimize_mw = true;
+flags.optimize_k = true;
+for source = ["+results/2024-01-10_17-15-59-flat-vopt-S.mat"]
+    init_guess_source = load(source,"result").result;
+    for mode1N = 6
+        for mode2N = 9
+            for mode3N = 3
+                for mode4N = 6
+                    for vNow = [12]
+                        v = vNow;
+                        for stepNow = [1.9,2]
+                            step = stepNow;
+                            step_lb = max(step/2,step-1); %Lower bound of step length
+                            for tiptoenow = 1e-1
+                                tiptoe_upper_bound = tiptoenow;
+                                tiptoe_bound_init_guess = tiptoenow;
+                                for runtype = [0]
+                                    for vmode = [1]
+                                        flags.runtype = runtype;
+                                        flags.optimize_vmode = vmode;
+                                        [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,init_guess_source);
+                                    end
                                 end
                             end
                         end
                     end
                 end
             end
-        end
-    end  
+        end  
+    end
 end
+
+
 %CASADI options used
 %       casadi_options.ipopt.max_iter = 50000;
 %       casadi_options.ipopt.acceptable_iter = 0;

@@ -30,7 +30,7 @@ function gridconstraints1(conh, k, K, x, p)
   if(k==1)                  % かかとは初期空中
     conh.add(pj(6,2),'>=',0.1);
     conh.add(pj(6,2),'<=',0.3);
-    conh.add(x.th1,'>=',x.th4);
+    %conh.add(x.th1,'>=',x.th4);
   end
   
   conh.add(dq(8),'>=',0);
