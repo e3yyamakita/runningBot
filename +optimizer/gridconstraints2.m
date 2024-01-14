@@ -65,6 +65,7 @@ if k == K
     conh.add(norm([dq_after;dphi]-[dq0(1);mapDerivWOxb*[dq0(2:end);dphi0]]),'<=',periodic_accuracy_bound);
     
     if flags.optimize_vmode
+        %conh.add((q(1)-q0(1)),'>=',1);
         conh.add((q(1)-q0(1)/x.period),'==',x.velocity_achieved);
     else
         conh.add((q(1)-q0(1))/x.period,'==',p.velocity_achieved); %走行速度

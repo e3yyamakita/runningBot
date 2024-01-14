@@ -13,7 +13,8 @@ classdef params
         m7 = 11.5; %torso
 
         % mass of wobbling mass
-        mw = 0.35;
+        %mw = 0.35;
+        mw = 1.7;
 
         % inertia of link
         %il = 1/12 * ModelDynamics.ml .* ModelDynamics.ll.^2;
