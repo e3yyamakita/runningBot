@@ -37,5 +37,6 @@ function check_violation(source,sol,periodic_accuracy_bound)
     if (norm(v_viol) - periodic_accuracy_bound) > periodic_accuracy_bound*1e-3
         fprintf("\tDecomposed error: %f \n",v_viol);
     end
-        
+    min_time_diff = min(diff(source.time));
+    fprintf("Minimum time diff: %f \n",min_time_diff);
 end

@@ -11,12 +11,14 @@ function gridconstraints3(conh, k, K, x, p)
   pj = SEA_model.pj(params,x);
   dpj = SEA_model.dpj(params,x);
   optimizer.gridconstraints_base(conh, q, phi, pj, dpj, x, p);
+  pcom = SEA_model.pcom(params,x,z,p);
 
   %% 各関節が地面より上(y座標制約)
   conh.add(pj(1,2),'>=',0); % Supp Knee
   %conh.add(pj(2,2),'>=',0); % Supp ankle
 
   if ismember(flags.runtype, [1,3,5]) %Fore
+      conh.add(pcom(1),'>=',pj(3,1));
       conh.add(pj(3,2),'==',0); % Supp Toe
       if ~(k==K)
           conh.add(pj(4,2),'>=',0); % Supp heel
@@ -84,6 +86,7 @@ function gridconstraints3(conh, k, K, x, p)
       end
     end
   
+
 
 if k >= 3
   conh.add(ppdlw-2*pdlw+dq(4),'<=',2) %滑らか制約
