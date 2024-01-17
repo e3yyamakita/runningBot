@@ -50,7 +50,7 @@ function dae1(daeh,x,z,u,p)
   ddpw = SEA_model.ddpw(params,x,z);
   ddpcx = [ddpc(:,1); ddpw(1)];
   ddpcy = [ddpc(:,2); ddpw(2)];
-  pcom = SEA_model.pcom(params,x,z,p);
+  pcom = SEA_model.pcom(params,x,p);
   ddpcom = SEA_model.ddpcom(params,x,z,p);
   xcom = pcom(1); ycom = pcom(2);
   ddxcom = ddpcom(1); ddycom = ddpcom(2);

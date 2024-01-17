@@ -1,4 +1,4 @@
-function pcom = pcom(params,x,z,p)
+function pcom = pcom(params,x,p)
 global flags
 
 g = params.g;
@@ -65,17 +65,6 @@ dq7 = x.dth3;
 dq8 = x.dth4;
 dq9 = x.dth5;
 dq10 = x.dth6;
-
-d2q1 = z.ddxb;
-d2q2 = z.ddyb;
-d2q3 = z.ddthb;
-d2q4 = z.ddlw;
-d2q5 = z.ddth1;
-d2q6 = z.ddth2;
-d2q7 = z.ddth3;
-d2q8 = z.ddth4;
-d2q9 = z.ddth5;
-d2q10 = z.ddth6;
 
 %PCOM
 %    PCOM = PCOM(A1,A2,A3,A4,A5,A6,A7,C1,C2,L1,L2,L4,L5,L7,M1,M2,M3,M4,M5,M6,M7,MW,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,Q10)
