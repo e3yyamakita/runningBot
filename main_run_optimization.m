@@ -22,8 +22,8 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
         tiptoe_bound_init_guess = 0;
     end
 
-    %tiptoe_duration_bound = [0,tiptoe_upper_bound];
-    tiptoe_duration_bound = [1e-8,tiptoe_upper_bound];   
+    tiptoe_duration_bound = [0,tiptoe_upper_bound];
+   
     %ig = InitialGuess(step, false);
     %ig.draw();
 
@@ -140,6 +140,8 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
            outcome = 'Inf';
         elseif sol_info.ipopt_stats.return_status == "Maximum_Iterations_Exceeded"
             outcome = 'Max';
+        else
+            outcome = '???';
         end
         result_filename = convertStringsToChars(join(['+results/' datestr(exe_time,'yyyy-mm-dd_HH-MM-SS-') suffix(flags.runtype+1)  veltype(flags.optimize_vmode+1) outcome '.mat'],''));
         

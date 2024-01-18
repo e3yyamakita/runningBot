@@ -2,7 +2,7 @@
 
 function gridconstraints2(conh, k, K, x, p)
 tic;
-global q0 phi0 dq0 dphi0 pdlw ppdlw lambda_land periodic_accuracy_bound
+global q0 phi0 dq0 dphi0 pdlw ppdlw lambda_land periodic_accuracy_bound step_lb
 global ppphi pphi
 global flags
 
@@ -65,7 +65,7 @@ if k == K
     conh.add(norm([dq_after;dphi]-[dq0(1);mapDerivWOxb*[dq0(2:end);dphi0]]),'<=',periodic_accuracy_bound);
     
     if flags.optimize_vmode
-        %conh.add((q(1)-q0(1)),'>=',1);
+        conh.add((q(1)-q0(1)),'>=',step_lb);
         conh.add((q(1)-q0(1)/x.period),'==',x.velocity_achieved);
     else
         conh.add((q(1)-q0(1))/x.period,'==',p.velocity_achieved); %走行速度

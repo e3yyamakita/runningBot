@@ -18,7 +18,7 @@ function gridconstraints3(conh, k, K, x, p)
   %conh.add(pj(2,2),'>=',0); % Supp ankle
 
   if ismember(flags.runtype, [1,3,5]) %Fore
-      conh.add(pcom(1),'>=',pj(3,1));
+      %conh.add(pcom(1),'>=',pj(3,1));
       conh.add(pj(3,2),'==',0); % Supp Toe
       if ~(k==K)
           conh.add(pj(4,2),'>=',0); % Supp heel

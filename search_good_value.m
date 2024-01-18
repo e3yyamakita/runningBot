@@ -18,39 +18,9 @@ flags.check()
 periodic_accuracy_bound = 1e-3;
 alpha = 1;
 flags.use_ankle_sea = false;
-for source = ["+results/2024-01-10_17-15-59-flat-vopt-S.mat"]
-    init_guess_source = load(source,"result").result;
-    for mode1N = 6
-        for mode2N = 9
-            for mode3N = 3
-                for mode4N = 6
-                    for vNow = [12]
-                        v = vNow;
-                        for stepNow = [1.9,2]
-                            step = stepNow;
-                            step_lb = max(step/2,step-1); %Lower bound of step length
-                            for tiptoenow = 1e-1
-                                tiptoe_upper_bound = tiptoenow;
-                                tiptoe_bound_init_guess = tiptoenow;
-                                for runtype = [0]
-                                    for vmode = [1]
-                                        flags.runtype = runtype;
-                                        flags.optimize_vmode = vmode;
-                                        [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,init_guess_source);
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end  
-    end
-end
-
 flags.optimize_mw = true;
 flags.optimize_k = true;
-for source = ["+results/2024-01-10_17-15-59-flat-vopt-S.mat"]
+for source = ["+results/2024-01-17_16-02-50-flat-vlock-Scs-lowcost.mat"]
     init_guess_source = load(source,"result").result;
     for mode1N = 6
         for mode2N = 9
@@ -58,14 +28,14 @@ for source = ["+results/2024-01-10_17-15-59-flat-vopt-S.mat"]
                 for mode4N = 6
                     for vNow = [12]
                         v = vNow;
-                        for stepNow = [1.9,2]
+                        for stepNow = [1.9:0.1:2.3]
                             step = stepNow;
-                            step_lb = max(step/2,step-1); %Lower bound of step length
-                            for tiptoenow = 1e-1
+                            step_lb = 1; %Lower bound of step length
+                            for tiptoenow = [1e-5,1e-4,1e-3,1e-2]
                                 tiptoe_upper_bound = tiptoenow;
                                 tiptoe_bound_init_guess = tiptoenow;
-                                for runtype = [0]
-                                    for vmode = [1]
+                                for runtype = [1,3]
+                                    for vmode = [0]
                                         flags.runtype = runtype;
                                         flags.optimize_vmode = vmode;
                                         [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,init_guess_source);
@@ -79,8 +49,6 @@ for source = ["+results/2024-01-10_17-15-59-flat-vopt-S.mat"]
         end  
     end
 end
-
-
 %CASADI options used
 %       casadi_options.ipopt.max_iter = 50000;
 %       casadi_options.ipopt.acceptable_iter = 0;
