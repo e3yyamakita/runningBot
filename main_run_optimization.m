@@ -1,14 +1,15 @@
-function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,init_guess_source)
+function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,source_string)
     close all;
     clc;
-    
-    clearvars -except mode1N mode2N mode3N mode4N init_guess_source;
-    global v step flags tiptoe_upper_bound tiptoe_bound_init_guess alpha
+    init_guess_source = load(source_string,"result").result;
+
+    clearvars -except mode1N mode2N mode3N mode4N init_guess_source source_string;
+    global v step flags tiptoe_lower_bound tiptoe_upper_bound tiptoe_bound_init_guess alpha com_offset
     
     % ↓ optimization setting ↓
     period_init_guess = step/v;
     opt = ocl.casadi.CasadiOptions();
-    opt.ipopt.max_iter = 40000;
+    opt.ipopt.max_iter = 35000;
     opt.ipopt.acceptable_iter = 0;
     opt.ipopt.acceptable_tol = 1e0;
     opt.ipopt.expect_infeasible_problem_ctol = 1e-2;
@@ -19,10 +20,11 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
     
     if flags.runtype == 0
         tiptoe_upper_bound = 0;
+        tiptoe_lower_bound = 0;
         tiptoe_bound_init_guess = 0;
     end
 
-    tiptoe_duration_bound = [0,tiptoe_upper_bound];
+    tiptoe_duration_bound = [tiptoe_lower_bound,tiptoe_upper_bound];
    
     %ig = InitialGuess(step, false);
     %ig.draw();
@@ -81,8 +83,8 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
         period_bound = period_init_guess*[tiptoe_upper_bound 0.2 0.5 1];
         mode3.setInitialStateBounds('time', 0);
 
-        mode3.setEndStateBounds('time', 0, tiptoe_duration_bound(2));
-        mode1.setInitialStateBounds('time', 0, tiptoe_duration_bound(2));
+        mode3.setEndStateBounds('time', tiptoe_duration_bound(1) , tiptoe_duration_bound(2));
+        mode1.setInitialStateBounds('time', tiptoe_duration_bound(1) , tiptoe_duration_bound(2));
 
 %         mode3.setEndStateBounds('time', period_bound(1)*0.8, period_bound(1)*1.2);
 %         mode1.setInitialStateBounds('time', period_bound(1)*0.8, period_bound(1)*1.2);
@@ -121,8 +123,13 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
     [~,~]=mkdir('+console');
     suffix = ["flat-","fore-","back-","fore3phase-","back3phase-","purefore-","pureback-"];
     veltype = ["vlock-","vopt-"];
-    console_filename = join(['+console/' datestr(exe_time,'yyyy-mm-dd_HH-MM-SS-') suffix(flags.runtype+1) veltype(flags.optimize_vmode+1) '.log'],'');
-    diary(console_filename)
+    
+
+    if exist("+results/temp_console.log") == 2
+        delete("+results/temp_console.log");
+    end
+    
+    diary("+results/temp_console.log")
 
     % solve
     disp("Starting with ");
@@ -145,7 +152,7 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
         end
         result_filename = convertStringsToChars(join(['+results/' datestr(exe_time,'yyyy-mm-dd_HH-MM-SS-') suffix(flags.runtype+1)  veltype(flags.optimize_vmode+1) outcome '.mat'],''));
         
-        save(result_filename,'sol','times','result','flags','v','step');
+        save(result_filename,'sol','times','result','flags','v','step','source_string','com_offset');
 
     %     diary off;
 
@@ -153,4 +160,7 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
         output.result_txt(result,data_name);
     %end
     diary off
+
+    result_filename = join(['+console/' datestr(exe_time,'yyyy-mm-dd_HH-MM-SS-') suffix(flags.runtype+1) veltype(flags.optimize_vmode+1) outcome '.log'],'');
+    movefile("+results/temp_console.log", result_filename);
 end

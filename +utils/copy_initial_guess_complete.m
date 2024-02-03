@@ -179,7 +179,7 @@ elseif  size(source.state_size,2) == 4
     end
    mode.initialize('time', state_time_grid,...
            source.time(state_data_grid));
-    disp("Dimension mismatch for intial guess")
+    
 end
 
 i = 1;
