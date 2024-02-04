@@ -1,6 +1,7 @@
 function vars_base(vh)
 
   global flags alpha v step
+  global k_lim
   % State x
   vh.addState('xb');
   vh.addState('yb',  'lb',     0);
@@ -59,9 +60,9 @@ function vars_base(vh)
   vh.addState('time'  ,'lb',0);
   % params
   if flags.optimize_k
-    vh.addState('khip'  ,'lb',0, 'ub',4000);    %TODO return to ori 1200
-    vh.addState('kknee' ,'lb',0, 'ub',4000);
-    vh.addState('kankle','lb',0, 'ub',4000);
+    vh.addState('khip'  ,'lb',0, 'ub',k_lim);    %TODO return to ori 1200
+    vh.addState('kknee' ,'lb',0, 'ub',k_lim);
+    vh.addState('kankle','lb',0, 'ub',k_lim);
   end
   if flags.optimize_mw
     vh.addState('mw'    ,'lb', 0.02, 'ub', 1.5);

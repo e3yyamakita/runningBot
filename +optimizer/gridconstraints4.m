@@ -16,6 +16,7 @@ function gridconstraints3(conh, k, K, x, p)
   conh.add(pj(1,2),'>=',0); % Supp Knee
   %conh.add(pj(2,2),'>=',0); % Supp ankle
   conh.add(pj(3,2),'==',0); % Supp Toe
+  conh.add(pj(3,1),'==',params.l3-params.c1);
   if k == 1
     conh.add(pj(4,2),'==',0);  % Supp heel
   elseif ~(k==1) 

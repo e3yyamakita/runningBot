@@ -9,7 +9,7 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
     % ↓ optimization setting ↓
     period_init_guess = step/v;
     opt = ocl.casadi.CasadiOptions();
-    opt.ipopt.max_iter = 35000;
+    opt.ipopt.max_iter = 15000;
     opt.ipopt.acceptable_iter = 0;
     opt.ipopt.acceptable_tol = 1e0;
     opt.ipopt.expect_infeasible_problem_ctol = 1e-2;
@@ -19,7 +19,6 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
     % ↑ optimization setting ↑
     
     if flags.runtype == 0
-        tiptoe_upper_bound = 0;
         tiptoe_lower_bound = 0;
         tiptoe_bound_init_guess = 0;
     end
