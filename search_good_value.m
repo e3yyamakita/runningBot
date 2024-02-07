@@ -1,5 +1,5 @@
 global v step initialized tiptoe_upper_bound tiptoe_bound_init_guess step_lb flags mode1N mode2N mode3N mode4N periodic_accuracy_bound alpha com_offset tiptoe_lower_bound
-global k_lim
+global k_lim u_lim
 initialized = 1;
 
 flags = Flags;
@@ -20,38 +20,72 @@ flags.optimize_mw = true;
 flags.optimize_k = true;
 com_offset = 0;
 tiptoe_lower_bound = 0;
-source = ["+results/2024-02-03_15-01-44-flat-vlock-Scs-toogood.mat",...
+u_lim = 500;
+for source = ["+results/2024-02-08_08-03-21-flat-vlock-Scs.mat"
         ];
-for k_now = [2000,3000,4000,5000,6000]
-    k_lim = k_now;
-    for mode1N = 6
-        for mode2N = 9
-            for mode3N = 3
-                for mode4N = 6
-                    for vNow = [12]
-                        v = vNow;
-                        for stepNow = [1.9:0.2:2.3]
-                            step = stepNow;
-                            step_lb = 1; %Lower bound of step length
-                            for tiptoenow = [1e-2]
-                                tiptoe_upper_bound = tiptoenow;
-                                tiptoe_bound_init_guess = tiptoenow;
-                                for runtype = [1]
-                                    for vmode = [0]
-                                        flags.runtype = runtype;
-                                        flags.optimize_vmode = vmode;
-                                        [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,source);
+    for k_now = [4000]
+        k_lim = k_now;
+        for mode1N = 6
+            for mode2N = 9
+                for mode3N = 3
+                    for mode4N = 6
+                        for vNow = [12]
+                            v = vNow;
+                            for stepNow = [1.9:0.2:2.3]
+                                step = stepNow;
+                                step_lb = 1; %Lower bound of step length
+                                for tiptoenow = [1e-2]
+                                    tiptoe_upper_bound = tiptoenow;
+                                    tiptoe_bound_init_guess = tiptoenow;
+                                    for runtype = [0]
+                                        for vmode = [0]
+                                            flags.runtype = runtype;
+                                            flags.optimize_vmode = vmode;
+                                            [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,source);
+                                        end
                                     end
                                 end
                             end
                         end
                     end
                 end
-            end
-        end  
+            end  
+        end
     end
 end
 
+% for source = ["+results/2024-02-08_02-59-56-fore-vlock-Inf.mat"
+%         ];
+%     for k_now = [4000]
+%         k_lim = k_now;
+%         for mode1N = 6
+%             for mode2N = 9
+%                 for mode3N = 3
+%                     for mode4N = 6
+%                         for vNow = [12]
+%                             v = vNow;
+%                             for stepNow = [1.8:0.2:2.4]
+%                                 step = stepNow;
+%                                 step_lb = 1; %Lower bound of step length
+%                                 for tiptoenow = [1e-2]
+%                                     tiptoe_upper_bound = tiptoenow;
+%                                     tiptoe_bound_init_guess = tiptoenow;
+%                                     for runtype = [1]
+%                                         for vmode = [0]
+%                                             flags.runtype = runtype;
+%                                             flags.optimize_vmode = vmode;
+%                                             [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,source);
+%                                         end
+%                                     end
+%                                 end
+%                             end
+%                         end
+%                     end
+%                 end
+%             end  
+%         end
+%     end
+% end
 %CASADI options used
 %       casadi_options.ipopt.max_iter = 50000;
 %       casadi_options.ipopt.acceptable_iter = 0;
