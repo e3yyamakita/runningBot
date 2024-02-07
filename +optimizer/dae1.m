@@ -58,7 +58,7 @@ function dae1(daeh,x,z,u,p)
   dJzmp = SEA_model.dJzmp(params,x,z);
   Jc1 = SEA_model.Jc1(params,x);
   dJc1 = SEA_model.dJc1(params,x);
-  fe = [z.fex*z.fey; z.fey; z.feth];
+  fe = [z.fex*z.fey; z.fey; z.feth*z.fey];
   
   if flags.use_ankle_sea
     tau = K*(phi-q(5:10,:));

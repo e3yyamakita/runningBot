@@ -3,7 +3,7 @@
 function gridconstraints3(conh, k, K, x, p)
   tic;
   global q0 phi0 dq0 dphi0 pdlw ppdlw
-  global ppphi pphi
+  global ppphi pphi com_offset
   global flags
 
   %% 共通部分
@@ -11,8 +11,12 @@ function gridconstraints3(conh, k, K, x, p)
   pj = SEA_model.pj(params,x);
   dpj = SEA_model.dpj(params,x);
   optimizer.gridconstraints_base(conh, q, phi, pj, dpj, x, p);
+  pcom = SEA_model.pcom(params,x,p);
 
   %% 各関節が地面より上(y座標制約)
+  if k == K
+    conh.add(pcom(1)-0.075,'>=',com_offset);
+  end
   conh.add(pj(1,2),'>=',0); % Supp Knee
   %conh.add(pj(2,2),'>=',0); % Supp ankle
   conh.add(pj(3,2),'==',0); % Supp Toe

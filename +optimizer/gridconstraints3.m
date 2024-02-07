@@ -11,14 +11,14 @@ function gridconstraints3(conh, k, K, x, p)
   pj = SEA_model.pj(params,x);
   dpj = SEA_model.dpj(params,x);
   optimizer.gridconstraints_base(conh, q, phi, pj, dpj, x, p);
-  pcom = SEA_model.pcom(params,x,p);
+  
 
   %% 各関節が地面より上(y座標制約)
   conh.add(pj(1,2),'>=',0); % Supp Knee
   %conh.add(pj(2,2),'>=',0); % Supp ankle
 
   if ismember(flags.runtype, [1,3,5]) %Fore
-      conh.add(pcom(1)-pj(3,1),'>=',com_offset);
+      
       conh.add(pj(3,2),'==',0); % Supp Toe
       if ~(k==K)
           conh.add(pj(4,2),'>=',0); % Supp heel
@@ -60,9 +60,11 @@ function gridconstraints3(conh, k, K, x, p)
         %conh.add(pj(4,2),'==',0);  % 支持脚かかと
         dq_after_lambda = [M,-Jc1.'; Jc1,zeros(3,3)] \ [M*dq; zeros(3,1)];
         lambda = dq_after_lambda(11:end);
-%         conh.add(lambda(1),'<=',lambda(2));
-%         conh.add(-lambda(1),'<=',lambda(2));
+         conh.add(lambda(1),'<=',lambda(2));
+         conh.add(-lambda(1),'<=',lambda(2));
         conh.add(lambda(2),'>=',0);
+         conh.add(lambda(3),'<=',0.075*lambda(2));
+         conh.add(-lambda(3),'<=',0.025*lambda(2));
         % Impact condition is in transition function
     end
  

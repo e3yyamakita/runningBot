@@ -1,7 +1,7 @@
 function vars_base(vh)
 
   global flags alpha v step
-  global k_lim
+  global k_lim u_lim
   % State x
   vh.addState('xb');
   vh.addState('yb',  'lb',     0);
@@ -89,12 +89,12 @@ function vars_base(vh)
 
   % Control u
 %   if flags.optimize_vmode 
-    vh.addControl('u1','lb',-500,'ub',500);
-    vh.addControl('u2','lb',-500,'ub',500);
-    vh.addControl('u3','lb',-500,'ub',500);
-    vh.addControl('u4','lb',-500,'ub',500);
-    vh.addControl('u5','lb',-500,'ub',500);
-    vh.addControl('u6','lb',-500,'ub',500);
+    vh.addControl('u1','lb',-u_lim,'ub',u_lim);
+    vh.addControl('u2','lb',-u_lim,'ub',u_lim);
+    vh.addControl('u3','lb',-u_lim,'ub',u_lim);
+    vh.addControl('u4','lb',-u_lim,'ub',u_lim);
+    vh.addControl('u5','lb',-u_lim,'ub',u_lim);
+    vh.addControl('u6','lb',-u_lim,'ub',u_lim);
     
 %     vh.addControl('u1','lb',-100,'ub',100); %TODO Original limit 300,200,100
 %     vh.addControl('u2','lb',-80,'ub',80);

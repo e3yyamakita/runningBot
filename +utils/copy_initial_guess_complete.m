@@ -309,5 +309,5 @@ end
 
         if mode_N == 1
           mode.initialize('zmp_x', [1:source.algvars_size(ceil(size(source.state_size,2)/2))], source.zmp_x);
-          mode.initialize('feth', algvars_time_grid, source.feth(algvars_data_grid));
+          mode.initialize('feth', algvars_time_grid, source.feth(algvars_data_grid)./source.fey(algvars_data_grid));
         end

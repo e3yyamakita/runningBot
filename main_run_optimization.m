@@ -9,13 +9,18 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
     % ↓ optimization setting ↓
     period_init_guess = step/v;
     opt = ocl.casadi.CasadiOptions();
-    opt.ipopt.max_iter = 15000;
-    opt.ipopt.acceptable_iter = 0;
-    opt.ipopt.acceptable_tol = 1e0;
+    opt.ipopt.max_iter = 20000;
+    opt.ipopt.acceptable_tol = 1e-3;
+    opt.ipopt.acceptable_iter = 1;
+    opt.ipopt.acceptable_dual_inf_tol = 1e10;
+    opt.ipopt.acceptable_constr_viol_tol = 1e-3;
+    opt.ipopt.acceptable_compl_inf_tol = 1e6;
+    opt.ipopt.expect_infeasible_problem = 'no';
     opt.ipopt.expect_infeasible_problem_ctol = 1e-2;
     opt.ipopt.required_infeasibility_reduction = 0.92;
-    opt.ipopt.acceptable_compl_inf_tol = 1e2;    
-    opt.ipopt.acceptable_constr_viol_tol = 1e-3;
+        
+    
+    
     % ↑ optimization setting ↑
     
     if flags.runtype == 0

@@ -161,6 +161,7 @@ classdef Result
       obj.imp_foot = zeros(3,0);
       obj.imp_land = zeros(2,0);
       obj.fex = obj.fex.*obj.fey;
+      obj.feth = obj.feth.*obj.fey;
       
       if ismember(obj.flags.runtype, [0])
         obj.zmp_x = [sol{1}.integrator.algvars.zmp_x.value];
@@ -362,6 +363,12 @@ classdef Result
       x = make_struct(obj, k);
       pcom = SEA_model.pcom(params, x);
     end
+
+    function dpcom = calc_dpcom(obj,k)
+      x = make_struct(obj, k);
+      dpcom = SEA_model.dpcom(params, x);
+    end
+
     function ddpcom = calc_ddpcom(obj,k)
       [x,z] = make_struct(obj, k);
       ddpcom = SEA_model.ddpcom(params, x, z);

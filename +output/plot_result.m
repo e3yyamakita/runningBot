@@ -21,6 +21,9 @@ output.plot.controls(result);
 % plot force
 output.plot.force(result);
 
+% plot com
+output.plot.pcom(result);
+
 % print params
 output.print_param(result);
 
