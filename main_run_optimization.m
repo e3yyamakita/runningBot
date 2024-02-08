@@ -4,13 +4,13 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
     init_guess_source = load(source_string,"result").result;
 
     clearvars -except mode1N mode2N mode3N mode4N init_guess_source source_string;
-    global v step flags tiptoe_lower_bound tiptoe_upper_bound tiptoe_bound_init_guess alpha com_offset
+    global v step flags tiptoe_lower_bound tiptoe_upper_bound tiptoe_bound_init_guess alpha com_offset cost_scaling
     
     % ↓ optimization setting ↓
     period_init_guess = step/v;
     opt = ocl.casadi.CasadiOptions();
-    opt.ipopt.max_iter = 20000;
-    opt.ipopt.acceptable_tol = 1e-3;
+    opt.ipopt.max_iter = 40000;
+    opt.ipopt.acceptable_tol = 1e-4;
     opt.ipopt.acceptable_iter = 1;
     opt.ipopt.acceptable_dual_inf_tol = 1e10;
     opt.ipopt.acceptable_constr_viol_tol = 1e-3;
@@ -33,7 +33,7 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
     %ig = InitialGuess(step, false);
     %ig.draw();
 
-    if ismember(flags.runtype, [0:4])
+    if ismember(flags.runtype, [0:4,7])
         mode1 = ocl.Stage( ...
           [], ...
           'vars', @optimizer.vars1, ...
@@ -66,7 +66,7 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
       utils.copy_initial_guess_complete(mode3,3,init_guess_source);
     end
     
-    if ismember(flags.runtype, [1,2])
+    if ismember(flags.runtype, [1,2,7])
       mode4 = ocl.Stage( ...
       [], ...
       'vars', @optimizer.vars4, ...
@@ -83,7 +83,7 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
         mode1.setEndStateBounds('time', period_bound(1), period_bound(2));
         mode2.setInitialStateBounds('time', period_bound(1), period_bound(2));
         mode2.setEndStateBounds('time', period_bound(3), period_bound(4));
-    else
+    elseif ismember(flags.runtype, [1,2,3,4,5,6])
         period_bound = period_init_guess*[tiptoe_upper_bound 0.2 0.5 1];
         mode3.setInitialStateBounds('time', 0);
 
@@ -100,6 +100,14 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
 %         mode2.setInitialStateBounds('time', period_bound(3)*0.8, period_bound(3)*1.2);
 
         mode2.setEndStateBounds('time', period_bound(4)*0.5, period_bound(4)*1.5);
+    elseif ismember(flags.runtype, [7])
+        period_bound = period_init_guess*[0.2, 0.6, 0.8, 1.2];
+        mode1.setInitialStateBounds('time', 0);
+        %mode1.setEndStateBounds('time', period_bound(1), period_bound(2));
+        %mode4.setInitialStateBounds('time', period_bound(1), period_bound(2));
+        %mode4.setEndStateBounds('time', period_bound(1)+tiptoe_duration_bound(1), period_bound(2)+tiptoe_duration_bound(2));
+        %mode2.setInitialStateBounds('time',  period_bound(1)+tiptoe_duration_bound(1), period_bound(2)+tiptoe_duration_bound(2));
+        mode2.setEndStateBounds('time', period_bound(3), period_bound(4));  
     end
 
 
@@ -120,12 +128,16 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
         ocp = ocl.MultiStageProblem({mode3,mode2}, ...
                                 {@optimizer.trans_stand2float},...
                                 'casadi_options',opt);
+    elseif ismember(flags.runtype, [7])
+        ocp = ocl.MultiStageProblem({mode1,mode4,mode2}, ...
+                                {@optimizer.trans_stand2float,@optimizer.trans_stand2float},...
+                                'casadi_options',opt);
     end
     
     % save console log
     exe_time = now;
     [~,~]=mkdir('+console');
-    suffix = ["flat-","fore-","back-","fore3phase-","back3phase-","purefore-","pureback-"];
+    suffix = ["flat-","fore-","back-","fore3phase-","back3phase-","purefore-","pureback-","flatkick-"];
     veltype = ["vlock-","vopt-"];
     
 
@@ -152,11 +164,11 @@ function [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode
         elseif sol_info.ipopt_stats.return_status == "Maximum_Iterations_Exceeded"
             outcome = 'Max';
         else
-            outcome = '???';
+            outcome = 'Fail';
         end
         result_filename = convertStringsToChars(join(['+results/' datestr(exe_time,'yyyy-mm-dd_HH-MM-SS-') suffix(flags.runtype+1)  veltype(flags.optimize_vmode+1) outcome '.mat'],''));
         
-        save(result_filename,'sol','times','result','flags','v','step','source_string','com_offset');
+        save(result_filename,'sol','times','result','flags','v','step','source_string','com_offset','cost_scaling');
 
     %     diary off;
 

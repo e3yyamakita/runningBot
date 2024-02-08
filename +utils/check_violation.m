@@ -4,7 +4,7 @@ function check_violation(source,sol,periodic_accuracy_bound)
     x = utils.compose_state(source,sol{length(source.state_size)}.states{source.state_size(end)});
     M = SEA_model.M(params,x,sol{1}.parameters);
     
-    if source.flags.runtype == 0
+    if ismember(source.flags.runtype, [0,7])
         Jc2 = SEA_model.Jc2(params,x);
         dq_after_lambda = [M,-Jc2.'; Jc2,zeros(3,3)] \ [M*dq(:,end); zeros(3,1)];
         dq_after = dq_after_lambda(1:10);

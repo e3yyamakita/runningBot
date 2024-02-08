@@ -78,17 +78,17 @@ end
         %mode.initialize('time', [0 1], source.time(state_data_grid)+tiptoe_upper_bound*ones(size(state_time_grid)));
         mode.initialize('time', [0 1], source.time(state_data_grid)+tiptoe_upper_bound*ones(size(state_time_grid)));
     end
-elseif  size(source.state_size,2) == 3
+elseif  size(source.state_size,2) == 3 && ismember(source.flags.runtype, [7])
     if mode_N == 1
         
-        state_data_grid = [source.state_size(1)+1:sum(source.state_size(1:2))];
-        state_time_grid = normalize(source.time(state_data_grid)-source.time(state_data_grid(1)),'range');
+        state_data_grid = [1:source.state_size(1)] ;
+        state_time_grid = normalize(source.time(state_data_grid),'range');
         
-        control_data_grid = [source.control_size(1)+1:sum(source.control_size(1:2))];
-        control_time_grid = normalize(source.control_time(control_data_grid)-source.control_time(control_data_grid(1)),'range');
+        control_data_grid = [1:source.control_size(1)] ;
+        control_time_grid = normalize(source.control_time(control_data_grid),'range');
         
-        algvars_data_grid = [source.algvars_size(1)+1:sum(source.algvars_size(1:2))];
-        algvars_time_grid = normalize(source.algvars_time(algvars_data_grid)-source.algvars_time(algvars_data_grid(1)),'range');
+        algvars_data_grid =  [1:source.algvars_size(1)] ;
+        algvars_time_grid = normalize(source.algvars_time(algvars_data_grid),'range');
 
     elseif mode_N == 2
     
@@ -101,16 +101,16 @@ elseif  size(source.state_size,2) == 3
         algvars_data_grid = [source.algvars_size(2)+1:sum(source.algvars_size(1:3))];
         algvars_time_grid = normalize(source.algvars_time(algvars_data_grid)-source.algvars_time(algvars_data_grid(1)),'range');        
 
-    elseif mode_N == 3
+    elseif mode_N == 4
        
-        state_data_grid = [1:source.state_size(1)];
-        state_time_grid = normalize(source.time(state_data_grid),'range');
+        state_data_grid = [source.state_size(1)+1:sum(source.state_size(1:2))];
+        state_time_grid = normalize(source.time(state_data_grid)-source.time(state_data_grid(1)),'range');
         
-        control_data_grid = [1:source.control_size(1)];
-        control_time_grid = normalize(source.control_time(control_data_grid),'range');
+        control_data_grid = [source.control_size(1)+1:sum(source.control_size(1:2))];
+        control_time_grid = normalize(source.control_time(control_data_grid)-source.control_time(control_data_grid(1)),'range');
         
-        algvars_data_grid = [1:source.algvars_size(1)];
-        algvars_time_grid = normalize(source.algvars_time(algvars_data_grid),'range');
+        algvars_data_grid = [source.algvars_size(1)+1:sum(source.algvars_size(1:2))];
+        algvars_time_grid = normalize(source.algvars_time(algvars_data_grid)-source.algvars_time(algvars_data_grid(1)),'range');
     end
     i = 1;
     

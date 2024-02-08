@@ -7,6 +7,7 @@ classdef Flags
     runtype;
     optimize_vmode;
     use_ankle_sea;
+    enable_friction_cone;
   end
   methods
     function check(obj)

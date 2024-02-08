@@ -163,7 +163,7 @@ classdef Result
       obj.fex = obj.fex.*obj.fey;
       obj.feth = obj.feth.*obj.fey;
       
-      if ismember(obj.flags.runtype, [0])
+      if ismember(obj.flags.runtype, [0,7])
         obj.zmp_x = [sol{1}.integrator.algvars.zmp_x.value];
       elseif ismember(obj.flags.runtype, [1:4])
         obj.zmp_x = [sol{2}.integrator.algvars.zmp_x.value];
@@ -259,8 +259,16 @@ classdef Result
             [~, dq, ~, ~] = utils.decompose_state(x0);
             dq_after_lambda = inv([M,-Jheel2.'; Jheel2,zeros(2,2)])*[M*dq; zeros(2,1)];
             obj.imp_foot = dq_after_lambda(11:12).value;
+      elseif ismember(obj.flags.runtype, [7])
+            last_state_size = sol{3}.states.size;
+            x0 = sol{3}.states{last_state_size(2)};
+            p0 = sol{3}.parameters{1};
+            M = SEA_model.M(params,x0,p0);
+            Jc2 = SEA_model.Jc2(params,x0);
+            [~, dq, ~, ~] = utils.decompose_state(x0);
+            dq_after_lambda = inv([M,-Jc2.'; Jc2,zeros(3,3)])*[M*dq; zeros(3,1)];
+            obj.imp_foot = dq_after_lambda(11:13).value;
       end
-      
       
       % ダブり要素の削除
 %       del_pos = zeros(1,length(sol));

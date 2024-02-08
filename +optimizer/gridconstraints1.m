@@ -38,7 +38,7 @@ function gridconstraints1(conh, k, K, x, p)
   %% 遊脚前進制約
   conh.add(dpj(6,1),'>=',0);
 
-    if flags.runtype ~= 0 || k >= 3
+    if ~ismember(flags.runtype, [0,7]) || k >= 3
       conh.add(ppdlw-2*pdlw+dq(4),'<=',2) %滑らか制約
       conh.add(ppdlw-2*pdlw+dq(4),'>=',-2)
     end
@@ -46,7 +46,7 @@ function gridconstraints1(conh, k, K, x, p)
   ppdlw = pdlw;
   pdlw = dq(4);
 
-    if flags.runtype == 0 && k==1
+    if ismember(flags.runtype, [0,7]) && k==1
       conh.add(dpj(6,2),'>=',0); %脚交換制約
       q0 = q;
       phi0 = phi;
@@ -57,7 +57,7 @@ function gridconstraints1(conh, k, K, x, p)
 %   ppphi = pphi;
 %   pphi = dq(4);
 
-if flags.runtype ~= 0 || k >= 3
+if ~ismember(flags.runtype, [0,7]) || k >= 3
   if flags.use_ankle_sea  
       conh.add(ppphi-2*pphi+phi,'<=',2) %滑らか制約
       conh.add(ppphi-2*pphi+phi,'>=',-2)

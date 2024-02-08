@@ -1,7 +1,7 @@
 function pathcosts(ch, x, z, u, p)
  % ステージコスト
   tic;
-  global v flags alpha q0
+  global v flags alpha q0 cost_scaling
 
   if flags.use_ankle_sea
     actuator_vel = [x.dphi1;x.dphi2;x.dphi3;x.dphi4;x.dphi5;x.dphi6];
@@ -31,10 +31,10 @@ function pathcosts(ch, x, z, u, p)
   g = 9.80665;
 
   if flags.optimize_vmode
-    ch.add(alpha * 500/(x.dxb)/x.period + (1-alpha)*sum(abs(actuator_vel.*U))/(M*g*x.velocity_achieved)/x.period);
+    ch.add(alpha * cost_scaling/(x.dxb)/x.period + (1-alpha)* cost_scaling * sum(abs(actuator_vel.*U))/(M*g*x.velocity_achieved)/x.period);
     %ch.add((1-alpha)*sum(abs(actuator_vel.*U))/(M*g*x.velocity_achieved)/x.period);
   else
-    ch.add(1e-1*sum(abs(actuator_vel.*U))/(M*g*p.velocity_achieved)/x.period);
+    ch.add(cost_scaling*sum(abs(actuator_vel.*U))/(M*g*p.velocity_achieved)/x.period);
   end
   
   fprintf('pathcosts             complete : %.2f seconds\n',toc);

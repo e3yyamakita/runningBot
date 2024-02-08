@@ -60,11 +60,14 @@ function gridconstraints3(conh, k, K, x, p)
         %conh.add(pj(4,2),'==',0);  % 支持脚かかと
         dq_after_lambda = [M,-Jc1.'; Jc1,zeros(3,3)] \ [M*dq; zeros(3,1)];
         lambda = dq_after_lambda(11:end);
-         conh.add(lambda(1),'<=',lambda(2));
-         conh.add(-lambda(1),'<=',lambda(2));
+        if flags.enable_friction_cone
+             conh.add(lambda(3),'<=',0.075*lambda(2));
+             conh.add(-lambda(3),'<=',0.025*lambda(2));
+             conh.add(lambda(1),'<=',lambda(2));
+             conh.add(-lambda(1),'<=',lambda(2));
+        end
         conh.add(lambda(2),'>=',0);
-         conh.add(lambda(3),'<=',0.075*lambda(2));
-         conh.add(-lambda(3),'<=',0.025*lambda(2));
+
         % Impact condition is in transition function
     end
  
