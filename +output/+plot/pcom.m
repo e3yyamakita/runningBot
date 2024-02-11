@@ -1,5 +1,4 @@
 function pcom(result)
-
 len = length(result.time);
 pcom = zeros(len, 2);
 dpcom = zeros(len, 2);
@@ -13,16 +12,16 @@ for k=1:len
 end
 
 figure;
-
-subplot(2,1,1);
+subplot(2,2,1);
 hold on
 plot(result.time,pcom(:,1));
 legend("pcom");
 title("pcom");
 xlabel('time [t]'); ylabel('pcom [m]');
+title("CoM horizontal position");
 result.separate_background_with_section('state');
 
-subplot(2,1,2);
+subplot(2,2,2);
 hold on
 plot(result.time,dpcom(:,1));
 legend("pcom");
@@ -30,6 +29,24 @@ title("CoM horizontal velocity");
 xlabel('time [t]'); ylabel('CoM velocity [m/s]');
 result.separate_background_with_section('state');
 
+subplot(2,2,3);
+hold on
+plot(result.time,pcom(:,2));
+legend("pcom");
+title("pcom");
+xlabel('time [t]'); ylabel('pcom [m]');
+title("CoM vertical position");
+result.separate_background_with_section('state');
+
+subplot(2,2,4);
+hold on
+plot(result.time,dpcom(:,2));
+legend("pcom");
+title("CoM vertical velocity");
+xlabel('time [t]'); ylabel('CoM velocity [m/s]');
+result.separate_background_with_section('state');
+
+diff(dpcom(:,2))./diff(result.time())
 %{
 subplot(2,1,2);
 hold on
