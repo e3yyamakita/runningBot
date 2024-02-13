@@ -90,8 +90,8 @@ function create_model()
 
 % position of center of mass
   syms pcom [1 2]
-  pcom(1) = (m*pc(:,1)+mw*pw(1))/sum(m);
-  pcom(2) = (m*pc(:,2)+mw*pw(2))/sum(m);
+  pcom(1) = (m*pc(:,1)+mw*pw(1))/(sum(m)+mw);
+  pcom(2) = (m*pc(:,2)+mw*pw(2))/(sum(m)+mw);
 
 % position of ZMP
   syms zmp_x

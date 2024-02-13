@@ -45,8 +45,6 @@ legend("pcom");
 title("CoM vertical velocity");
 xlabel('time [t]'); ylabel('CoM velocity [m/s]');
 result.separate_background_with_section('state');
-
-diff(dpcom(:,2))./diff(result.time())
 %{
 subplot(2,1,2);
 hold on
