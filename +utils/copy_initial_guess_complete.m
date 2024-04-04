@@ -2,8 +2,12 @@ function copy_initial_guess_complete(mode, mode_N, source)
 global flags tiptoe_bound_init_guess tiptoe_upper_bound mode1N mode2N mode3N mode4N
 
 % Completely copies all variables from the source as initial guess
+% Probably the worst script in the entire repo, pls fix
 
-% Works with 2 phase or 4 phase sources. 
+% Works with 2,3 phase or 4 phase sources. 
+disp('Init guess source size');
+disp(size(source.state_size,2));
+
 
 if size(source.state_size,2) == 2
     if mode_N == 1
@@ -238,7 +242,6 @@ elseif  size(source.state_size,2) == 4
     end
    mode.initialize('time', state_time_grid,...
            source.time(state_data_grid));
-    
 end
 
 i = 1;
@@ -345,7 +348,17 @@ end
               mode.initialize('kankle', [0 1],params.kankle*ones(1,2));
             end
         end
-        
+
+        if flags.use_inerter
+            if source.flags.use_inerter
+              mode.initialize('beta_ankle'  , [0 1],source.beta_ankle  *ones(1,2));
+              mode.initialize('beta_knee' , [0 1],source.beta_knee *ones(1,2));
+            else
+              mode.initialize('beta_ankle'  , [0 1],params.beta_ankle  *ones(1,2));
+              mode.initialize('beta_knee' , [0 1],params.beta_knee *ones(1,2));
+            end
+        end
+
         if flags.optimize_mw
             if source.flags.optimize_mw
               mode.initialize('mw'    , [0,1],source.mw *ones(1,2) );

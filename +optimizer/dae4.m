@@ -22,6 +22,21 @@ function dae4(daeh,x,z,u,p)
     B = diag(repmat([params.bhip params.bknee params.bankle],1,2));
   end
   
+  if flags.use_inerter
+       beta_ankle = x.beta_ankle;
+       beta_knee = x.beta_knee;
+       bm = [0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,beta_knee,         0,          0,        0,          0;
+             0,0,0,0,0,        0,beta_ankle,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,beta_knee,          0;
+             0,0,0,0,0,        0,         0,          0,        0, beta_ankle];
+  end
+
   S = params.S;
   % wobbling mass
   uw = u.uw;
@@ -70,7 +85,10 @@ function dae4(daeh,x,z,u,p)
   end
   tau2 = [uw;tau];
   
-
+  if flags.use_inerter
+      M = M+bm;
+  end
+  
   fe = [z.fex*z.fey; z.fey]; 
   DAE1 = [M,-Jtoe.'; Jtoe,zeros(2,2)]*[ddq;fe] - [S*tau2-h; -dJtoe*dq];
   DAE2 = B*ddphi - (U-tau);

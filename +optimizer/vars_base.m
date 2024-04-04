@@ -88,7 +88,6 @@ function vars_base(vh)
 
 
   % Control u
-%   if flags.optimize_vmode 
     vh.addControl('u1','lb',-u_lim,'ub',u_lim);
     vh.addControl('u2','lb',-u_lim,'ub',u_lim);
     vh.addControl('u3','lb',-u_lim,'ub',u_lim);
@@ -96,27 +95,6 @@ function vars_base(vh)
     vh.addControl('u5','lb',-u_lim,'ub',u_lim);
     vh.addControl('u6','lb',-u_lim,'ub',u_lim);
     
-%     vh.addControl('u1','lb',-100,'ub',100); %TODO Original limit 300,200,100
-%     vh.addControl('u2','lb',-80,'ub',80);
-%     vh.addControl('u3','lb', -10,'ub', 10);
-%     vh.addControl('u4','lb',-100,'ub',100);
-%     vh.addControl('u5','lb',-80,'ub',80);
-%     vh.addControl('u6','lb', -10,'ub', 10);
-%   else
-%     vh.addControl('u1','lb',-100,'ub',100);
-%     vh.addControl('u2','lb',-80,'ub',80);
-%     vh.addControl('u3','lb', -10,'ub', 10);
-%     vh.addControl('u4','lb',-100,'ub',100);
-%     vh.addControl('u5','lb',-80,'ub',80);
-%     vh.addControl('u6','lb', -10,'ub', 10);
-    
-%     vh.addControl('u1','lb', -80,'ub', 80);
-%     vh.addControl('u2','lb', -40,'ub', 40);
-%     vh.addControl('u3','lb', -20,'ub', 20);
-%     vh.addControl('u4','lb', -80,'ub', 80);
-%     vh.addControl('u5','lb', -40,'ub', 40);
-%     vh.addControl('u6','lb', -20,'ub', 20);
-%   end
   
   if flags.use_wobbling_mass
     vh.addControl('uw','lb',-100,'ub',100);
@@ -130,6 +108,11 @@ function vars_base(vh)
     vh.addState('velocity_achieved','lb',0);
   else
     vh.addParameter('velocity_achieved', 'default', v);
+  end
+
+  if flags.use_inerter
+    vh.addState('beta_ankle' ,'lb',0,'ub', 0.5);
+    vh.addState('beta_knee','lb',0,'ub', 0.5);
   end
 
   vh.addState('period','lb',0.5*step/v,'ub',1.5*step/v);

@@ -69,5 +69,10 @@ function dae_base(daeh, x, z, u, p)
     daeh.setODE('velocity_achieved', 0);
   end
   
+  if flags.use_inerter
+    daeh.setODE('beta_ankle' ,0);
+    daeh.setODE('beta_knee', 0);
+  end
+
   daeh.setODE('period', 0);
 end

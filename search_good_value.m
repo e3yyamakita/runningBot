@@ -19,100 +19,32 @@ alpha = 1;
 flags.use_ankle_sea = false;
 flags.optimize_mw = true;
 flags.optimize_k = true;
-flags.enable_friction_cone = false;
+flags.enable_friction_cone = true;
+flags.use_inerter = true;
 com_offset = 0;
-tiptoe_lower_bound = 0;
+tiptoe_lower_bound = 1e-3;
 u_lim = 500;
-cost_scaling = 1;
-for source = ["+results/2024-01-10_17-15-59-flat-vopt-S.mat",...
-        "+results/2024-01-14_15-16-33-flat-vopt-Scs-fastest-flatfoot.mat",...
-        "+results/2024-01-17_16-02-50-flat-vlock-Scs-lowcost.mat",...
-        "+results/2024-02-08_22-21-00-flatkick-vlock-Max.mat",...
-        ];
-    for k_now = [4000]
-        k_lim = k_now;
-        for mode1N = 6
-            for mode2N = 9
-                for mode3N = 3
-                    for mode4N = 6
-                        for vNow = [12]
-                            v = vNow;
-                            for stepNow = [2.1:0.1:2.5]
-                                step = stepNow;                                step_lb = 1; %Lower bound of step length
-                                for tiptoenow = [1e-2]
-                                    tiptoe_upper_bound = tiptoenow;
-                                    tiptoe_bound_init_guess = tiptoenow;
-                                    for runtype = [7]
-                                        for vmode = [0]
-                                            flags.runtype = runtype;
-                                            flags.optimize_vmode = vmode;
-                                            [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,source);
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            end  
-        end
-    end
-end
 
-for source = ["+results/2024-01-10_17-15-59-flat-vopt-S.mat",...
-        "+results/2024-01-14_15-16-33-flat-vopt-Scs-fastest-flatfoot.mat",...
-        "+results/2024-01-17_16-02-50-flat-vlock-Scs-lowcost.mat",...
+k_now = [4000];
+for source = [
+        "+results/2024-02-09_03-21-02-flat-vlock-Scs.mat",...
         ];
-    for k_now = [4000]
+    for cost_scaling_now = [1]
+        cost_scaling = cost_scaling_now;
         k_lim = k_now;
         for mode1N = 6
             for mode2N = 9
                 for mode3N = 3
                     for mode4N = 6
-                        for vNow = [6]
+                        for vNow = [10]
                             v = vNow;
-                            for stepNow = [1.2:0.1:1.8]
-                                step = stepNow;
+                            for stepNow = [1.5:0.1:2.2]
+                                step = stepNow;                                
                                 step_lb = 1; %Lower bound of step length
                                 for tiptoenow = [1e-2]
                                     tiptoe_upper_bound = tiptoenow;
                                     tiptoe_bound_init_guess = tiptoenow;
                                     for runtype = [0]
-                                        for vmode = [0]
-                                            flags.runtype = runtype;
-                                            flags.optimize_vmode = vmode;
-                                            [result,sol,sol_info] = main_run_optimization(mode1N,mode2N,mode3N,mode4N,source);
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            end  
-        end
-    end
-end
-
-for source = ["+results/2024-01-10_17-15-59-flat-vopt-S.mat",...
-        "+results/2024-01-14_15-16-33-flat-vopt-Scs-fastest-flatfoot.mat",...
-        "+results/2024-01-17_16-02-50-flat-vlock-Scs-lowcost.mat",...
-        ];
-    for k_now = [4000]
-        k_lim = k_now;
-        for mode1N = 6
-            for mode2N = 9
-                for mode3N = 3
-                    for mode4N = 6
-                        for vNow = [6]
-                            v = vNow;
-                            for stepNow = [1.2:0.1:1.8]
-                                step = stepNow;
-                                step_lb = 1; %Lower bound of step length
-                                for tiptoenow = [1e-2]
-                                    tiptoe_upper_bound = tiptoenow;
-                                    tiptoe_bound_init_guess = tiptoenow;
-                                    for runtype = [1]
                                         for vmode = [0]
                                             flags.runtype = runtype;
                                             flags.optimize_vmode = vmode;

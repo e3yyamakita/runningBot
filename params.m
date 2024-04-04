@@ -54,7 +54,7 @@ classdef params
         % drive matrix
         S = [zeros(3,7);eye(7)];
         
-        % spring sttifness of SEA
+        % default spring stifness of SEA
         khip =  1200;
         kknee = 600;
         kankle = 1000;
@@ -65,5 +65,8 @@ classdef params
         bhip = 0.02;
         bknee = 0.02;
         bankle = 0.02;
+
+        beta_ankle = 0.25;
+        beta_knee = 0.25;
     end
 end

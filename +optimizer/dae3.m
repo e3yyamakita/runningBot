@@ -22,6 +22,21 @@ function dae3(daeh,x,z,u,p)
     B = diag(repmat([params.bhip params.bknee params.bankle],1,2));
   end
 
+  if flags.use_inerter
+       beta_ankle = x.beta_ankle;
+       beta_knee = x.beta_knee;
+       bm = [0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,beta_knee,         0,          0,        0,          0;
+             0,0,0,0,0,        0,beta_ankle,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,beta_knee,          0;
+             0,0,0,0,0,        0,         0,          0,        0, beta_ankle];
+  end
+
   S = params.S;
   % wobbling mass
   uw = u.uw;
@@ -68,6 +83,11 @@ function dae3(daeh,x,z,u,p)
   end
   
   tau2 = [uw;tau];
+  
+  if flags.use_inerter
+      M = M+bm;
+  end
+
   if ismember(flags.runtype, [1,3,5])
       Jtoe = SEA_model.Jtoe(params,x,z);
       dJtoe = SEA_model.dJtoe(params,x,z);

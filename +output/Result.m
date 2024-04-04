@@ -195,6 +195,11 @@ classdef Result
         obj.mw = mw(1);
       end
 
+      if obj.flags.use_inerter
+          beta_ankle = sol{1}.states.beta_ankle.value; obj.beta_ankle = beta_ankle(1);
+          beta_knee = sol{1}.states.beta_knee.value; obj.beta_knee = beta_knee(1);
+      end
+
       obj.period = obj.time(end);
       obj.v = (obj.xb(end)-obj.xb(1))/obj.period;
       obj.step = obj.v*obj.period;

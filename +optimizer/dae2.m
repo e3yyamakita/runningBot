@@ -22,7 +22,22 @@ function dae2(daeh,x,z,u,p)
     K = diag(repmat([params.khip params.kknee params.kankle],1,2));
     B = diag(repmat([params.bhip params.bknee params.bankle],1,2));
   end
- 
+
+  if flags.use_inerter
+       beta_ankle = x.beta_ankle;
+       beta_knee = x.beta_knee;
+       bm = [0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,beta_knee,         0,          0,        0,          0;
+             0,0,0,0,0,        0,beta_ankle,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,        0,          0;
+             0,0,0,0,0,        0,         0,          0,beta_knee,          0;
+             0,0,0,0,0,        0,         0,          0,        0, beta_ankle];
+  end
+
   S = params.S;
   % wobbling mass
   uw = u.uw;
@@ -39,6 +54,11 @@ function dae2(daeh,x,z,u,p)
   end
   
   tau2 = [uw;tau];
+
+  if flags.use_inerter
+      M = M+bm;
+  end
+  
   DAE1 = M*ddq -(S*tau2-h);
   DAE2 = B*ddphi - (U-tau);
   if ~flags.use_ankle_sea
